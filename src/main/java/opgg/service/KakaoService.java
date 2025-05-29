@@ -1,4 +1,4 @@
-package opgg.User;
+package opgg.service;
 
 import opgg.dto.KakaoDTO;
 import org.springframework.http.*;

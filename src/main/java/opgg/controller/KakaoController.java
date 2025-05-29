@@ -1,6 +1,8 @@
-package opgg.User;
+package opgg.controller;
 
 import opgg.dto.KakaoDTO;
+import opgg.service.KakaoService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
