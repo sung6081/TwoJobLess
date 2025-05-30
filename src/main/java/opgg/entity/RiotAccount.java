@@ -20,16 +20,13 @@ public class RiotAccount {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "id", nullable = false)
-	private Long id;
-	
 	@Column(name = "puuid", length = 100, nullable = false)
 	private String puuid;
 	
-	@Column(name = "game_name", length = 100, nullable = false)
+	@Column(name = "game_name", length = 50, nullable = false)
 	private String gameName;
 	
-	@Column(name = "tag_line", length = 100, nullable = false)
+	@Column(name = "tag_line", length = 50, nullable = false)
 	private String tagLine;
 	
 }
