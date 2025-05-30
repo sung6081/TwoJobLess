@@ -1,4 +1,4 @@
-package opgg.controller;
+package opgg.user;
 
 import org.springframework.web.bind.annotation.*;
 
