@@ -1,5 +1,5 @@
 package opgg.RiotApi;
 
-public class RiotService {
+public interface RiotService {
 
 }
