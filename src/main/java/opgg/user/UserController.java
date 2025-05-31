@@ -1,14 +1,21 @@
 package opgg.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5173") 
+import opgg.dto.UserDTO;
+
 @RestController
-@RequestMapping("/opgg/user")
+@RequestMapping("/user")
 public class UserController {
 
-    @GetMapping("/test")
-    public String test() {
-        return "CORS 연결 성공!";
+    @Autowired
+    private UserService userService;
+
+    // 회원가입 API
+    @PostMapping("/add")
+    public String addUser(@RequestBody UserDTO userDTO) {
+        userService.addUser(userDTO);
+        return "회원가입 성공!";
     }
 }

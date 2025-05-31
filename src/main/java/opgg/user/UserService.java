@@ -4,13 +4,12 @@ import java.util.List;
 import opgg.dto.UserDTO;
 
 public interface UserService {
-	
-    void addUser(UserDTO userDTO) throws Exception;
-    
-    UserDTO getUser(Long id) throws Exception;
-    
-    List<UserDTO> getUserList() throws Exception;
-    
-    void deleteUser(Long id) throws Exception;
-    
+
+    void addUser(UserDTO userDTO);
+
+    UserDTO getUser(Long id);
+
+    List<UserDTO> getUserList();
+
+    void deleteUser(Long id);
 }
