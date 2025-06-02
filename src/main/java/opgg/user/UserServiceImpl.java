@@ -29,16 +29,37 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user); 
     }
 
-
     @Override
     public UserDTO getUser(Long id) {
-        return null;
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. ID: " + id));
+
+        return new UserDTO(
+                user.getId(),
+                user.getName(),
+                user.getPassword(),
+                user.getCellPhone(),
+                user.getEmail(),
+                user.getRegDate()
+        );
     }
+
 
     @Override
     public List<UserDTO> getUserList() {
-        return null;
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new UserDTO(
+                        user.getId(),
+                        user.getName(),
+                        user.getPassword(),
+                        user.getCellPhone(),
+                        user.getEmail(),
+                        user.getRegDate()
+                ))
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public void deleteUser(Long id) {
