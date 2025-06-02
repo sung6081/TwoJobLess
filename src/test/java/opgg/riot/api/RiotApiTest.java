@@ -1,5 +1,7 @@
 package opgg.riot.api;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,7 +18,7 @@ public class RiotApiTest {
 	private RiotService riotService;
 	//private RiotService riotService = new RiotServiceImpl();
 	
-	@Test
+	//@Test
 	public void testGetRiotAccountWithGameName() {
 		
 		RiotAccountDTO riotAccountDTO1 =  riotService.getRiotAccountWithGameName("방학동 짜글이", "1132");
@@ -26,6 +28,15 @@ public class RiotApiTest {
 		System.out.println("test1 : "+riotAccountDTO1);
 		System.out.println("test2 : "+riotAccountDTO2);
 		System.out.println("test3 : "+riotAccountDTO3);
+		
+	}
+	
+	@Test
+	public void testGetChampionName() {
+		
+		Map<String, String> map = riotService.getNameANdKeyMapping();
+		
+		riotService.getRotationChamps(map);
 		
 	}
 	

@@ -1,4 +1,4 @@
-package opgg.dto;
+package opgg.champion;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,11 +13,14 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class RiotAccountDTO {
-	
+public class Skill {
+
 	//Field
-	private String gameName;
-	private String tagLine;
-	private String puuid;
+	private String name;
+	private String description; //스킬 설명
+	private String tooltip;
+	private String costType; //소모값
+	private String range;
+	private String image;
 	
 }

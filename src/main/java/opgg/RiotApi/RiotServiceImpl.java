@@ -9,6 +9,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import opgg.champion.RiotChampion;
+import opgg.champion.Skill;
 import opgg.dto.RiotAccountDTO;
 
 @Service("riotService")
@@ -26,12 +32,124 @@ public class RiotServiceImpl implements RiotService {
 	@Value("${riot.apiKey}")
 	private String apiKey;
 	
+	@Value("${riot.version}")
+	private String version;
+	
+	@Value("${riot.info.url}")
+	private String infoUrl;
+	
+	@Value("${riot.languge}")
+	private String language;
+	
+	@Override
+	public Map<String, String> getNameANdKeyMapping() {
+		
+		System.out.println("start getNameANdKeyMapping api");
+		
+		String championsUrl = infoUrl + "/" + version + "/data/" + language + "/champion.json";
+		System.out.println("getChampionName url : " + championsUrl);
+		
+		String championsResponse = get(championsUrl);
+		
+		//모든 챔피언의 이름과 key매핑
+		Map<String, String> mappingIdWithKey = new HashMap<>();
+		
+		try {
+			
+			JSONObject championsInfo = new JSONObject(championsResponse.toString());
+			
+			//모든 챔피언 정보
+			JSONObject champions = championsInfo.getJSONObject("data");
+			
+			//챔피언 이름들
+			JSONArray names = champions.names();
+			
+			for(int i = 0; i < names.length(); i++) {
+				
+				JSONObject champion = champions.getJSONObject(names.getString(i));
+				
+				mappingIdWithKey.put(champion.get("key").toString(), names.get(i).toString());
+				
+				//System.out.println("key : " + champion.get("key").toString() + " = " + names.get(i).toString());
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("end getNameANdKeyMapping api");
+		
+		return mappingIdWithKey;
+		
+	}
+	
+	@Override
+	public List<RiotChampion> getRotationChamps(Map<String, String> mappingIdWithKey) {
+		// TODO Auto-generated method stub
+		List<RiotChampion> list = new ArrayList<RiotChampion>();
+		
+		System.out.println("start getRotationChamps api");
+		
+		String url = "https://kr.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=" + apiKey;
+		
+		String rotationResponse = get(url);
+		
+		try {
+			
+			JSONObject rotationInfo = new JSONObject(rotationResponse.toString());
+			
+			//로테이션 챔피언
+			JSONArray rotation = rotationInfo.getJSONArray("freeChampionIds");
+			
+			for(int i = 0; i < rotation.length(); i++) {
+				
+				String name = mappingIdWithKey.get(rotation.get(i).toString());
+				RiotChampion champ = new RiotChampion();
+				
+				String championUrl = infoUrl + "/" + version + "/data/" + language + "/champion/" + name + ".json";
+				System.out.println("getChampionName url : " + championUrl);
+				
+				//챔피언 정보
+				JSONObject champion = new JSONObject(get(championUrl).toString()).getJSONObject("data").getJSONObject(name);
+				//System.out.println(champion);
+				//챔피언 passive 정보
+				JSONObject passive = champion.getJSONObject("passive");
+				//챔피언 스킬들 정보
+				JSONArray skills = champion.getJSONArray("spells");
+				
+				champ.setId(champion.getString("id"));
+				champ.setKey(Integer.parseInt(rotation.get(i).toString()));
+				champ.setTitle(champion.getString("title"));
+				champ.setImage(champion.getJSONObject("image").getString("full"));
+				champ.setLore(champion.getString("lore"));
+				champ.setPassive(passive.getString("name"));
+				champ.setPassiveDescription(passive.getString("description"));
+				champ.setPassiveImage(passive.getJSONObject("image").getString("full"));
+				
+				list.add(champ);
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//System.out.println(list);
+		
+		System.out.println("end getRotationChamps api");
+		
+		return list;
+	}
+	
 	@Override
 	public RiotAccountDTO getRiotAccountWithGameName(String gameName, String tagLine) {
 		// TODO Auto-generated method stub
 		RiotAccountDTO riotAccountDTO = new RiotAccountDTO();
 		
-		System.out.println("start api");
+		System.out.println("start getRiotAccountWithGameName api");
 		System.out.println(apiKey);
 		
 		try {
@@ -46,7 +164,7 @@ public class RiotServiceImpl implements RiotService {
 		System.out.println("url : "+url);
 		
 		String responseBody = get(url);
-		System.out.println(responseBody);
+		//System.out.println(responseBody);
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		
@@ -56,7 +174,7 @@ public class RiotServiceImpl implements RiotService {
             e.printStackTrace();
         }
 		
-		System.out.println("end api");
+		System.out.println("end getRiotAccountWithGameName api");
 		
 		return riotAccountDTO;
 	}
