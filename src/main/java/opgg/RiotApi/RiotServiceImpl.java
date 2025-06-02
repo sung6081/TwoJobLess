@@ -31,8 +31,8 @@ public class RiotServiceImpl implements RiotService {
 		// TODO Auto-generated method stub
 		RiotAccountDTO riotAccountDTO = new RiotAccountDTO();
 		
-		//System.out.println("start api");
-		//System.out.println(apiKey);
+		System.out.println("start api");
+		System.out.println(apiKey);
 		
 		try {
 			gameName = URLEncoder.encode(gameName, StandardCharsets.UTF_8);
@@ -43,10 +43,10 @@ public class RiotServiceImpl implements RiotService {
 		
 		String url = "https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/" +gameName.replaceAll("\\+", "%20")+ "/" +tagLine.replaceAll("\\+", "%20")+ "?api_key=" +apiKey;
 		
-		//System.out.println("url : "+url);
+		System.out.println("url : "+url);
 		
 		String responseBody = get(url);
-		//System.out.println(responseBody);
+		System.out.println(responseBody);
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		
@@ -56,7 +56,7 @@ public class RiotServiceImpl implements RiotService {
             e.printStackTrace();
         }
 		
-		//System.out.println("end api");
+		System.out.println("end api");
 		
 		return riotAccountDTO;
 	}
