@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpSession;
+import opgg.champion.ChampionMastery;
 import opgg.champion.RiotChampion;
 import opgg.dto.RiotAccountDTO;
 
@@ -16,5 +17,7 @@ public interface RiotService {
 	public List<RiotChampion> getRotationChamps(Map<String, String> mappingIdWithKey);
 	
 	public RiotAccountDTO getRiotAccountWithGameName(String gameName, String tagLine);
+	
+	public List<ChampionMastery> getMasteryWithGameName(String puuid, Map<String, String> mappingIdWithKey);
 	
 }

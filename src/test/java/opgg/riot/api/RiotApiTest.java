@@ -1,5 +1,6 @@
 package opgg.riot.api;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import opgg.RiotApi.RiotService;
 import opgg.RiotApi.RiotServiceImpl;
+import opgg.champion.ChampionMastery;
 import opgg.dto.RiotAccountDTO;
 
 @SpringBootTest
@@ -31,12 +33,23 @@ public class RiotApiTest {
 		
 	}
 	
-	@Test
+	//@Test
 	public void testGetChampionName() {
 		
 		Map<String, String> map = riotService.getNameANdKeyMapping();
 		
 		riotService.getRotationChamps(map);
+		
+	}
+	
+	@Test
+	public void testGetChampionMastery() {
+		
+		Map<String, String> map = riotService.getNameANdKeyMapping();
+		
+		List<ChampionMastery> list = riotService.getMasteryWithGameName("6R9vfGofyzyUGF6Uj7VgQ7kh6Fv33hTWoVJvPmfg-Q4YSK-x_LLoxU2d9DMhR81WQhBsCJQosRSLEQ", map);
+		
+		System.out.println(list);
 		
 	}
 	

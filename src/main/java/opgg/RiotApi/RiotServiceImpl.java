@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import opgg.champion.ChampionMastery;
 import opgg.champion.RiotChampion;
 import opgg.champion.Skill;
 import opgg.dto.RiotAccountDTO;
@@ -177,6 +178,48 @@ public class RiotServiceImpl implements RiotService {
 		System.out.println("end getRiotAccountWithGameName api");
 		
 		return riotAccountDTO;
+	}
+	
+	@Override
+	public List<ChampionMastery> getMasteryWithGameName(String puuid, Map<String, String> mappingIdWithKey) {
+		
+		System.out.println("start getMasteryWithGameName api");
+		
+		String url = "https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/" + puuid + "?api_key=" + apiKey;
+		
+		System.out.println("url : " + url);
+		
+		String responseBody = get(url);
+		
+		JSONArray masteries = new JSONArray(responseBody.toString());
+		//System.out.println(masteries);
+		
+		List<ChampionMastery> championMatsteried = new ArrayList<>();
+		
+		for(int i = 0; i < masteries.length(); i++) {
+			
+			JSONObject mastery = masteries.getJSONObject(i);
+			
+			ChampionMastery championMastery = new ChampionMastery();
+			championMastery.setChampionId(mastery.getInt("championId"));
+			championMastery.setChampionName(mappingIdWithKey.get(new Integer(mastery.getInt("championId")).toString()));
+			championMastery.setChampionLevel(mastery.getInt("championLevel"));
+			championMastery.setChampionPoints(mastery.getInt("championPoints"));
+			championMastery.setLastPlayTime(mastery.getInt("lastPlayTime"));
+			championMastery.setChampionPointsSinceLastLevel(mastery.getInt("championPointsSinceLastLevel"));
+			championMastery.setChampionPointsUntilNextLevel(mastery.getInt("championPointsUntilNextLevel"));
+			championMastery.setMarkRequiredForNextLevel(mastery.getInt("markRequiredForNextLevel"));
+			championMastery.setTokensEarned(mastery.getInt("tokensEarned"));
+			championMastery.setChampionSeasonMilestone(mastery.getInt("championSeasonMilestone"));
+			
+			championMatsteried.add(championMastery);
+			
+		}
+		
+		System.out.println("end getMasteryWithGameName api");
+		
+		return championMatsteried;
+		
 	}
 	
 	private static String get(String apiUrl){
