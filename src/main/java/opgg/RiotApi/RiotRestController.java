@@ -1,6 +1,7 @@
 package opgg.RiotApi;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import opgg.champion.ChampionMastery;
 import opgg.champion.RiotChampion;
 import opgg.dto.RiotAccountDTO;
 
@@ -31,8 +33,26 @@ public class RiotRestController {
 		
 	}
 	
+	@GetMapping("getMasteriesWithGameName/{gameName}/{tagLine}")
+	public List<ChampionMastery> getMasteriesWithGameName(
+			@PathVariable("gameName") String gameName,
+			@PathVariable("tagLine") String tagLine) throws Exception {
+		
+		System.out.println("getMasteriesWithGameName");
+		
+		String puuid = riotService.getRiotAccountWithGameName(gameName, tagLine).getPuuid();
+		System.out.println("puuid : " + puuid);
+		
+		Map<String, String> mappingIdWithKey = riotService.getNameANdKeyMapping();
+		
+		return riotService.getMasteryWithGameName(puuid, mappingIdWithKey);
+		
+	}
+	
 	@GetMapping("getRotationChamps")
 	public List<RiotChampion> getRotationChamps() throws Exception {
+		
+		System.out.println("getRotationChamps");
 		
 		return riotService.getRotationChamps(riotService.getNameANdKeyMapping());
 		
