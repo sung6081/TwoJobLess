@@ -12,7 +12,9 @@ import opgg.dto.RiotAccountDTO;
 
 public interface RiotService {
 	
-	public Map<String, String> getNameANdKeyMapping();
+	public Map<String, String> getNameAndKeyMapping();
+	
+	public RiotChampion getChampion(int key, Map<String, String> mappingIdWithKey);
 	
 	public List<RiotChampion> getRotationChamps(Map<String, String> mappingIdWithKey);
 	

@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import opgg.RiotApi.RiotService;
 import opgg.RiotApi.RiotServiceImpl;
 import opgg.champion.ChampionMastery;
+import opgg.champion.RiotChampion;
 import opgg.dto.RiotAccountDTO;
 
 @SpringBootTest
@@ -36,20 +37,31 @@ public class RiotApiTest {
 	//@Test
 	public void testGetChampionName() {
 		
-		Map<String, String> map = riotService.getNameANdKeyMapping();
+		Map<String, String> map = riotService.getNameAndKeyMapping();
 		
 		riotService.getRotationChamps(map);
+		
+	}
+	
+	//@Test
+	public void getRotation() {
+		
+		Map<String, String> map = riotService.getNameAndKeyMapping();
+		
+		List<RiotChampion> list = riotService.getRotationChamps(map);
+		
+		System.out.println(list);
 		
 	}
 	
 	@Test
 	public void testGetChampionMastery() {
 		
-		Map<String, String> map = riotService.getNameANdKeyMapping();
+		Map<String, String> map = riotService.getNameAndKeyMapping();
 		
 		List<ChampionMastery> list = riotService.getMasteryWithGameName("6R9vfGofyzyUGF6Uj7VgQ7kh6Fv33hTWoVJvPmfg-Q4YSK-x_LLoxU2d9DMhR81WQhBsCJQosRSLEQ", map);
 		
-		System.out.println(list);
+		//System.out.println(list);
 		
 	}
 	

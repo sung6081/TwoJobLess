@@ -15,8 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class ChampionMastery {
 
-	private int championId;
-	private String championName;
+	RiotChampion champion;
 	private int championLevel;
 	private int lastPlayTime;
 	private int championPoints;
@@ -25,7 +24,7 @@ public class ChampionMastery {
 	private int markRequiredForNextLevel;
 	private int tokensEarned;
 	private int championSeasonMilestone;
-	private String milestoneGrades;
-	private String nextSeasonMilestone;
+	//private String milestoneGrades;
+	//private String nextSeasonMilestone;
 	
 }

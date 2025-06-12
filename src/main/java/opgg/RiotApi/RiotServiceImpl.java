@@ -43,7 +43,7 @@ public class RiotServiceImpl implements RiotService {
 	private String language;
 	
 	@Override
-	public Map<String, String> getNameANdKeyMapping() {
+	public Map<String, String> getNameAndKeyMapping() {
 		
 		System.out.println("start getNameANdKeyMapping api");
 		
@@ -87,6 +87,48 @@ public class RiotServiceImpl implements RiotService {
 	}
 	
 	@Override
+	public RiotChampion getChampion(int key, Map<String, String> mappingIdWithKey) {
+		
+		RiotChampion riotChampion = new RiotChampion();
+		
+		//System.out.println("start getChampion");
+		
+		String name = mappingIdWithKey.get(new Integer(key).toString());
+		
+		String championUrl = infoUrl + "/" + version + "/data/" + language + "/champion/" + name + ".json";
+		//System.out.println("getChampionName url : " + championUrl);
+		
+		try {
+			
+			//챔피언 정보
+			JSONObject champion = new JSONObject(get(championUrl).toString()).getJSONObject("data").getJSONObject(name);
+			//System.out.println(champion);
+			//챔피언 passive 정보
+			JSONObject passive = champion.getJSONObject("passive");
+			//챔피언 스킬들 정보
+			JSONArray skills = champion.getJSONArray("spells");
+			
+			riotChampion.setId(champion.getString("id"));
+			riotChampion.setKey(key);
+			riotChampion.setTitle(champion.getString("title"));
+			riotChampion.setImage(champion.getJSONObject("image").getString("full"));
+			riotChampion.setLore(champion.getString("lore"));
+			riotChampion.setPassive(passive.getString("name"));
+			riotChampion.setPassiveDescription(passive.getString("description"));
+			riotChampion.setPassiveImage(passive.getJSONObject("image").getString("full"));
+			
+		}catch(Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//System.out.println("end getChampion");
+		
+		return riotChampion;
+		
+	}
+	
+	@Override
 	public List<RiotChampion> getRotationChamps(Map<String, String> mappingIdWithKey) {
 		// TODO Auto-generated method stub
 		List<RiotChampion> list = new ArrayList<RiotChampion>();
@@ -104,30 +146,13 @@ public class RiotServiceImpl implements RiotService {
 			//로테이션 챔피언
 			JSONArray rotation = rotationInfo.getJSONArray("freeChampionIds");
 			
+			System.out.println(rotation);
+			
+			//System.out.println("map : "+ mappingIdWithKey);
+			
 			for(int i = 0; i < rotation.length(); i++) {
 				
-				String name = mappingIdWithKey.get(rotation.get(i).toString());
-				RiotChampion champ = new RiotChampion();
-				
-				String championUrl = infoUrl + "/" + version + "/data/" + language + "/champion/" + name + ".json";
-				System.out.println("getChampionName url : " + championUrl);
-				
-				//챔피언 정보
-				JSONObject champion = new JSONObject(get(championUrl).toString()).getJSONObject("data").getJSONObject(name);
-				//System.out.println(champion);
-				//챔피언 passive 정보
-				JSONObject passive = champion.getJSONObject("passive");
-				//챔피언 스킬들 정보
-				JSONArray skills = champion.getJSONArray("spells");
-				
-				champ.setId(champion.getString("id"));
-				champ.setKey(Integer.parseInt(rotation.get(i).toString()));
-				champ.setTitle(champion.getString("title"));
-				champ.setImage(champion.getJSONObject("image").getString("full"));
-				champ.setLore(champion.getString("lore"));
-				champ.setPassive(passive.getString("name"));
-				champ.setPassiveDescription(passive.getString("description"));
-				champ.setPassiveImage(passive.getJSONObject("image").getString("full"));
+				RiotChampion champ = getChampion(Integer.parseInt(rotation.get(i).toString()), mappingIdWithKey);
 				
 				list.add(champ);
 				
@@ -201,8 +226,7 @@ public class RiotServiceImpl implements RiotService {
 			JSONObject mastery = masteries.getJSONObject(i);
 			
 			ChampionMastery championMastery = new ChampionMastery();
-			championMastery.setChampionId(mastery.getInt("championId"));
-			championMastery.setChampionName(mappingIdWithKey.get(new Integer(mastery.getInt("championId")).toString()));
+			championMastery.setChampion(getChampion(mastery.getInt("championId"), mappingIdWithKey));
 			championMastery.setChampionLevel(mastery.getInt("championLevel"));
 			championMastery.setChampionPoints(mastery.getInt("championPoints"));
 			championMastery.setLastPlayTime(mastery.getInt("lastPlayTime"));

@@ -43,7 +43,7 @@ public class RiotRestController {
 		String puuid = riotService.getRiotAccountWithGameName(gameName, tagLine).getPuuid();
 		System.out.println("puuid : " + puuid);
 		
-		Map<String, String> mappingIdWithKey = riotService.getNameANdKeyMapping();
+		Map<String, String> mappingIdWithKey = riotService.getNameAndKeyMapping();
 		
 		return riotService.getMasteryWithGameName(puuid, mappingIdWithKey);
 		
@@ -54,7 +54,7 @@ public class RiotRestController {
 		
 		System.out.println("getRotationChamps");
 		
-		return riotService.getRotationChamps(riotService.getNameANdKeyMapping());
+		return riotService.getRotationChamps(riotService.getNameAndKeyMapping());
 		
 	}
 	
