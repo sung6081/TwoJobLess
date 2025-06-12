@@ -10,6 +10,10 @@ public interface UserService {
     UserDTO getUser(Long id);
 
     List<UserDTO> getUserList();
+    
+    UserDTO login(String email, String password);
 
     void deleteUser(Long id);
+    
+    
 }
