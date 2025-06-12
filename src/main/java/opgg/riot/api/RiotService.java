@@ -1,4 +1,4 @@
-package opgg.RiotApi;
+package opgg.riot.api;
 
 import java.util.List;
 import java.util.Map;

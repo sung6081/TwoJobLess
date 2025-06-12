@@ -7,11 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import opgg.RiotApi.RiotService;
-import opgg.RiotApi.RiotServiceImpl;
+
 import opgg.champion.ChampionMastery;
 import opgg.champion.RiotChampion;
 import opgg.dto.RiotAccountDTO;
+import opgg.riot.api.RiotService;
+import opgg.riot.api.RiotServiceImpl;
 
 @SpringBootTest
 public class RiotApiTest {
