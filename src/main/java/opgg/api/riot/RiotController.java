@@ -1,4 +1,4 @@
-package opgg.riot.api;
+package opgg.api.riot;
 
 public class RiotController {
 

@@ -1,4 +1,4 @@
-package google.api;
+package opgg.api.google;
 
 import org.springframework.web.bind.annotation.RestController;
 
