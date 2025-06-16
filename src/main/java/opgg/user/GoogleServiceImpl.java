@@ -72,12 +72,13 @@ public class GoogleServiceImpl implements GoogleService {
 
         if (userInfo == null) return null;
 
-        return GoogleDTO.builder()
-            .id((String) userInfo.get("id"))               // Google에서 'sub' 대신 'id'로 제공
-            .name((String) userInfo.get("name"))
-            .email((String) userInfo.get("email"))
-            .picture((String) userInfo.get("picture"))
-            .build();
+//        return GoogleDTO.builder()
+//            .id((String) userInfo.get("id"))               // Google에서 'sub' 대신 'id'로 제공
+//            .name((String) userInfo.get("name"))
+//            .email((String) userInfo.get("email"))
+//            .picture((String) userInfo.get("picture"))
+//            .build();
+        return new GoogleDTO(userInfo.get("id").toString(), userInfo.get("name").toString(), userInfo.get("email").toString(), userInfo.get("picture").toString());
     }
 
 }
