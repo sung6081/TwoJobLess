@@ -12,50 +12,61 @@ import org.springframework.web.bind.annotation.RestController;
 
 import opgg.champion.ChampionMastery;
 import opgg.champion.RiotChampion;
+import opgg.dto.MatchDetailDTO;
 import opgg.dto.RiotAccountDTO;
 
 @RestController
 @RequestMapping("/opgg/riotapi/*")
 public class RiotRestController {
 
-	@Autowired
-	@Qualifier("riotService")
-	private RiotService riotService;
-	
-	@GetMapping("getPuuidFromGameName/{gameName}/{tagLine}")
-	public RiotAccountDTO getRiotAccountWithGameName(
-			@PathVariable("gameName") String gameName, 
-			@PathVariable("tagLine") String tagLine) throws Exception {
-		
-		System.out.println("getRiotAccountWithGameName");
-		
-		return riotService.getRiotAccountWithGameName(gameName, tagLine);
-		
-	}
-	
-	@GetMapping("getMasteriesWithGameName/{gameName}/{tagLine}")
-	public List<ChampionMastery> getMasteriesWithGameName(
-			@PathVariable("gameName") String gameName,
-			@PathVariable("tagLine") String tagLine) throws Exception {
-		
-		System.out.println("getMasteriesWithGameName");
-		
-		String puuid = riotService.getRiotAccountWithGameName(gameName, tagLine).getPuuid();
-		System.out.println("puuid : " + puuid);
-		
-		Map<String, String> mappingIdWithKey = riotService.getNameAndKeyMapping();
-		
-		return riotService.getMasteryWithGameName(puuid, mappingIdWithKey);
-		
-	}
-	
-	@GetMapping("getRotationChamps")
-	public List<RiotChampion> getRotationChamps() throws Exception {
-		
-		System.out.println("getRotationChamps");
-		
-		return riotService.getRotationChamps(riotService.getNameAndKeyMapping());
-		
-	}
-	
+   @Autowired
+   @Qualifier("riotService")
+   private RiotService riotService;
+   
+   @GetMapping("getPuuidFromGameName/{gameName}/{tagLine}")
+   public RiotAccountDTO getRiotAccountWithGameName(
+         @PathVariable("gameName") String gameName, 
+         @PathVariable("tagLine") String tagLine) throws Exception {
+      
+      System.out.println("getRiotAccountWithGameName");
+      
+      return riotService.getRiotAccountWithGameName(gameName, tagLine);
+      
+   }
+   
+   @GetMapping("getMasteriesWithGameName/{gameName}/{tagLine}")
+   public List<ChampionMastery> getMasteriesWithGameName(
+         @PathVariable("gameName") String gameName,
+         @PathVariable("tagLine") String tagLine) throws Exception {
+      
+      System.out.println("getMasteriesWithGameName");
+      
+      String puuid = riotService.getRiotAccountWithGameName(gameName, tagLine).getPuuid();
+      System.out.println("puuid : " + puuid);
+      
+      Map<String, String> mappingIdWithKey = riotService.getNameAndKeyMapping();
+      
+      return riotService.getMasteryWithGameName(puuid, mappingIdWithKey);
+      
+   }
+   
+   @GetMapping("getRotationChamps")
+   public List<RiotChampion> getRotationChamps() throws Exception {
+      
+      System.out.println("getRotationChamps");
+      
+      return riotService.getRotationChamps(riotService.getNameAndKeyMapping());
+      
+   }
+   
+   @GetMapping("getRecentMatches/{gameName}/{tagLine}")
+   public List<MatchDetailDTO> getRecentMatches(
+           @PathVariable("gameName") String gameName,
+           @PathVariable("tagLine") String tagLine) throws Exception {
+       
+       System.out.println("getRecentMatches");
+
+       return riotService.getRecentMatchDetail(gameName, tagLine);
+   }
+   
 }

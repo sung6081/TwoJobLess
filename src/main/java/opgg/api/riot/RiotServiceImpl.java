@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,14 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import opgg.champion.ChampionMastery;
 import opgg.champion.RiotChampion;
 import opgg.champion.Skill;
+import opgg.dto.MatchDetailDTO;
 import opgg.dto.RiotAccountDTO;
 
 @Service("riotService")
@@ -298,5 +302,83 @@ public class RiotServiceImpl implements RiotService {
             throw new RuntimeException("API 응답을 읽는 데 실패했습니다.", e);
         }
     }
+    
+    public List<String> getMatchIdsByPuuid(String puuid) {
+        String url = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=0&count=5&api_key=" + apiKey;
+        List<String> matchIds = new ArrayList<>();
+
+        try {
+            String response = get(url);
+            ObjectMapper mapper = new ObjectMapper();
+            matchIds = mapper.readValue(response, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return matchIds;
+    }
 	
+    @Override
+    public List<MatchDetailDTO> getRecentMatchDetail(String gameName, String tagLine) {
+        // 1. puuid 가져오기
+        RiotAccountDTO account = getRiotAccountWithGameName(gameName, tagLine);
+        String puuid = account.getPuuid();
+
+        if (puuid == null || puuid.isEmpty()) {
+            System.out.println("PUUID가 없습니다.");
+            return Collections.emptyList();
+        }
+
+        // 2. matchId 리스트 가져오기
+        List<String> matchIds = getMatchIdsByPuuid(puuid);
+
+        // 3. 각 matchId로 전적 정보 가져오기
+        List<MatchDetailDTO> matchDetails = new ArrayList<>();
+        for (String matchId : matchIds) {
+            MatchDetailDTO detail = getMatchDetail(matchId, puuid);
+            if (detail != null) {
+                matchDetails.add(detail);
+            }
+        }
+
+        return matchDetails;
+    }
+    
+    @Override
+    public MatchDetailDTO getMatchDetail(String matchId, String puuid) {
+        String url = "https://asia.api.riotgames.com/lol/match/v5/matches/" + matchId + "?api_key=" + apiKey;
+
+        try {
+            String responseBody = get(url);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode root = objectMapper.readTree(responseBody);
+
+            JsonNode info = root.path("info");
+            JsonNode participants = info.path("participants");
+
+            for (JsonNode participant : participants) {
+                if (participant.path("puuid").asText().equals(puuid)) {
+                    MatchDetailDTO dto = new MatchDetailDTO();
+
+                    dto.setMatchId(matchId);
+                    dto.setGameMode(info.path("gameMode").asText());
+                    dto.setGameDuration(info.path("gameDuration").asLong());
+                    dto.setChampionName(participant.path("championName").asText());
+                    dto.setKills(participant.path("kills").asInt());
+                    dto.setDeaths(participant.path("deaths").asInt());
+                    dto.setAssists(participant.path("assists").asInt());
+                    dto.setWin(participant.path("win").asBoolean());
+                    dto.setSummonerName(participant.path("summonerName").asText());
+
+                    return dto;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 }
