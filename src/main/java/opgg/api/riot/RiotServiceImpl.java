@@ -174,40 +174,6 @@ public class RiotServiceImpl implements RiotService {
 		return list;
 	}
 	
-	@Override
-	public RiotAccountDTO getRiotAccountWithGameName(String gameName, String tagLine) {
-		// TODO Auto-generated method stub
-		RiotAccountDTO riotAccountDTO = new RiotAccountDTO();
-		
-		System.out.println("start getRiotAccountWithGameName api");
-		System.out.println(apiKey);
-		
-		try {
-			gameName = URLEncoder.encode(gameName, StandardCharsets.UTF_8);
-			tagLine = URLEncoder.encode(tagLine, StandardCharsets.UTF_8);
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		String url = "https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/" +gameName.replaceAll("\\+", "%20")+ "/" +tagLine.replaceAll("\\+", "%20")+ "?api_key=" +apiKey;
-		
-		System.out.println("url : "+url);
-		
-		String responseBody = get(url);
-		//System.out.println(responseBody);
-		
-		ObjectMapper objectMapper = new ObjectMapper();
-		
-		try {
-            riotAccountDTO = objectMapper.readValue(responseBody, RiotAccountDTO.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-		
-		System.out.println("end getRiotAccountWithGameName api");
-		
-		return riotAccountDTO;
-	}
 	
 	@Override
 	public List<ChampionMastery> getMasteryWithGameName(String puuid, Map<String, String> mappingIdWithKey) {
@@ -303,21 +269,42 @@ public class RiotServiceImpl implements RiotService {
         }
     }
     
-    public List<String> getMatchIdsByPuuid(String puuid) {
-        String url = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=0&count=5&api_key=" + apiKey;
-        List<String> matchIds = new ArrayList<>();
-
-        try {
-            String response = get(url);
-            ObjectMapper mapper = new ObjectMapper();
-            matchIds = mapper.readValue(response, new TypeReference<List<String>>() {});
+    @Override
+	public RiotAccountDTO getRiotAccountWithGameName(String gameName, String tagLine) {
+		// TODO Auto-generated method stub
+		RiotAccountDTO riotAccountDTO = new RiotAccountDTO();
+		
+		System.out.println("start getRiotAccountWithGameName api");
+		System.out.println(apiKey);
+		
+		try {
+			gameName = URLEncoder.encode(gameName, StandardCharsets.UTF_8);
+			tagLine = URLEncoder.encode(tagLine, StandardCharsets.UTF_8);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		String url = "https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/" +gameName.replaceAll("\\+", "%20")+ "/" +tagLine.replaceAll("\\+", "%20")+ "?api_key=" +apiKey;
+		
+		System.out.println("url : "+url);
+		
+		String responseBody = get(url);
+		//System.out.println(responseBody);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		try {
+            riotAccountDTO = objectMapper.readValue(responseBody, RiotAccountDTO.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return matchIds;
-    }
+		
+		System.out.println("end getRiotAccountWithGameName api");
+		
+		return riotAccountDTO;
+	}
 	
+    
     @Override
     public List<MatchDetailDTO> getRecentMatchDetail(String gameName, String tagLine) {
         // 1. puuid 가져오기
@@ -343,6 +330,23 @@ public class RiotServiceImpl implements RiotService {
 
         return matchDetails;
     }
+    
+    
+    public List<String> getMatchIdsByPuuid(String puuid) {
+        String url = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=0&count=5&api_key=" + apiKey;
+        List<String> matchIds = new ArrayList<>();
+
+        try {
+            String response = get(url);
+            ObjectMapper mapper = new ObjectMapper();
+            matchIds = mapper.readValue(response, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return matchIds;
+    }
+    
     
     @Override
     public MatchDetailDTO getMatchDetail(String matchId, String puuid) {
@@ -381,4 +385,6 @@ public class RiotServiceImpl implements RiotService {
         return null;
     }
 
+
+	
 }
