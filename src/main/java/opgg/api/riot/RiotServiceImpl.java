@@ -114,12 +114,45 @@ public class RiotServiceImpl implements RiotService {
 			
 			riotChampion.setId(champion.getString("id"));
 			riotChampion.setKey(key);
+			riotChampion.setName(champion.getString("name"));
 			riotChampion.setTitle(champion.getString("title"));
 			riotChampion.setImage(champion.getJSONObject("image").getString("full"));
 			riotChampion.setLore(champion.getString("lore"));
 			riotChampion.setPassive(passive.getString("name"));
 			riotChampion.setPassiveDescription(passive.getString("description"));
 			riotChampion.setPassiveImage(passive.getJSONObject("image").getString("full"));
+			
+			//Skill
+			List<Skill> list = new ArrayList<>();
+			for(int i = 0; i < skills.length(); i++) {
+				
+				JSONObject jsonObject = skills.getJSONObject(i);
+				Skill skill = new Skill();
+				
+				skill.setName(jsonObject.getString("name"));
+				skill.setDescription(jsonObject.getString("description"));
+				skill.setTooltip(jsonObject.getString("tooltip"));
+				skill.setCostType(jsonObject.getString("costType"));
+				//소모값이 있다면
+				if(!skill.getCostType().equals("소모값 없음")) {
+					JSONArray array = jsonObject.getJSONArray("cost");
+					List<Integer> list2 = new ArrayList<>();
+					for(int j = 0; j < array.length(); j++) {
+						list2.add(array.getInt(j));
+					}
+					skill.setCost(list2);
+				}
+				JSONArray array = jsonObject.getJSONArray("range");
+				List<Integer> list2 = new ArrayList<>();
+				for(int j = 0; j < array.length(); j++) {
+					list2.add(array.getInt(j));
+				}
+				skill.setRange(list2);
+				skill.setImage(jsonObject.getJSONObject("image").getString("full"));
+				list.add(skill);
+				
+			}
+			riotChampion.setSkills(list);
 			
 		}catch(Exception e) {
 			// TODO Auto-generated catch block

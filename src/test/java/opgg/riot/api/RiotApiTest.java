@@ -45,6 +45,16 @@ public class RiotApiTest {
 	}
 	
 	//@Test
+	public void getChampion() {
+		
+		Map<String, String> map = riotService.getNameAndKeyMapping();
+		RiotChampion champion = riotService.getChampion(1, map);
+		
+		System.out.println(champion);
+		
+	}
+	
+	//@Test
 	public void getRotation() {
 		
 		Map<String, String> map = riotService.getNameAndKeyMapping();
@@ -55,14 +65,14 @@ public class RiotApiTest {
 		
 	}
 	
-	@Test
+	//@Test
 	public void testGetChampionMastery() {
 		
 		Map<String, String> map = riotService.getNameAndKeyMapping();
 		
 		List<ChampionMastery> list = riotService.getMasteryWithGameName("6R9vfGofyzyUGF6Uj7VgQ7kh6Fv33hTWoVJvPmfg-Q4YSK-x_LLoxU2d9DMhR81WQhBsCJQosRSLEQ", map);
 		
-		//System.out.println(list);
+		System.out.println(list);
 		
 	}
 	

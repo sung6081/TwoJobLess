@@ -1,24 +1,39 @@
 package opgg.champion;
 
+import java.util.List;
+
 public class RiotChampion {
 
 	//Field
 	private String id; //챔피언 이름
 	private int key; //구분 번호
+	private String name; //챔피언 이름
 	private String title;
 	private String image; //작은 사각 image
 	private String lore; //챔피언 설명
 	private String passive; //passive name
 	private String passiveDescription; //pasive description
 	private String passiveImage; //passive image
-	private Skill skillQ;
-	private Skill skillW;
-	private Skill skillE;
-	private Skill skillR;
+	private List<Skill> skills;
 	
 	//Constructor
 	public RiotChampion() {
 		
+	}
+
+	public RiotChampion(String id, int key, String name, String title, String image, String lore, String passive,
+			String passiveDescription, String passiveImage, List<Skill> skills) {
+		super();
+		this.id = id;
+		this.key = key;
+		this.name = name;
+		this.title = title;
+		this.image = image;
+		this.lore = lore;
+		this.passive = passive;
+		this.passiveDescription = passiveDescription;
+		this.passiveImage = passiveImage;
+		this.skills = skills;
 	}
 
 	//Getter & Setter
@@ -36,6 +51,14 @@ public class RiotChampion {
 
 	public void setKey(int key) {
 		this.key = key;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getTitle() {
@@ -86,44 +109,19 @@ public class RiotChampion {
 		this.passiveImage = passiveImage;
 	}
 
-	public Skill getSkillQ() {
-		return skillQ;
+	public List<Skill> getSkills() {
+		return skills;
 	}
 
-	public void setSkillQ(Skill skillQ) {
-		this.skillQ = skillQ;
-	}
-
-	public Skill getSkillW() {
-		return skillW;
-	}
-
-	public void setSkillW(Skill skillW) {
-		this.skillW = skillW;
-	}
-
-	public Skill getSkillE() {
-		return skillE;
-	}
-
-	public void setSkillE(Skill skillE) {
-		this.skillE = skillE;
-	}
-
-	public Skill getSkillR() {
-		return skillR;
-	}
-
-	public void setSkillR(Skill skillR) {
-		this.skillR = skillR;
+	public void setSkills(List<Skill> skills) {
+		this.skills = skills;
 	}
 
 	@Override
 	public String toString() {
-		return "RiotChampion [id=" + id + ", key=" + key + ", title=" + title + ", image=" + image + ", lore=" + lore
-				+ ", passive=" + passive + ", passiveDescription=" + passiveDescription + ", passiveImage="
-				+ passiveImage + ", skillQ=" + skillQ + ", skillW=" + skillW + ", skillE=" + skillE + ", skillR="
-				+ skillR + "]";
+		return "RiotChampion [id=" + id + ", key=" + key + ", name=" + name + ", title=" + title + ", image=" + image
+				+ ",\n lore=" + lore + ", passive=" + passive + ", passiveDescription=" + passiveDescription
+				+ ", passiveImage=" + passiveImage + ",\n skills=" + skills + "]";
 	}
 	
 }
