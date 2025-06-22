@@ -12,14 +12,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "RiotAccount")
 public class RiotAccount {
 
 	@Id
-	@GeneratedValue
 	@Column(name = "puuid", length = 100, nullable = false)
 	private String puuid;
 	
@@ -28,5 +24,46 @@ public class RiotAccount {
 	
 	@Column(name = "tag_line", length = 50, nullable = false)
 	private String tagLine;
+	
+	//Constructor
+	public RiotAccount() {
+		
+	}
+	
+	public RiotAccount(String puuid, String gameName, String tagLine) {
+		super();
+		this.puuid = puuid;
+		this.gameName = gameName;
+		this.tagLine = tagLine;
+	}
+
+	public static RiotAccount of(String puuid, String gameName, String tagLine) {
+		return new RiotAccount(puuid, gameName, tagLine);
+	}
+	
+	//Getter & Setter
+	public String getPuuid() {
+		return puuid;
+	}
+
+	public void setPuuid(String puuid) {
+		this.puuid = puuid;
+	}
+
+	public String getGameName() {
+		return gameName;
+	}
+
+	public void setGameName(String gameName) {
+		this.gameName = gameName;
+	}
+
+	public String getTagLine() {
+		return tagLine;
+	}
+
+	public void setTagLine(String tagLine) {
+		this.tagLine = tagLine;
+	}
 	
 }

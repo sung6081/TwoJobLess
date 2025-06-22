@@ -1,5 +1,7 @@
 package opgg.dto;
 
+import opgg.entity.RiotAccount;
+
 public class RiotAccountDTO {
 	
 	//Field
@@ -9,6 +11,14 @@ public class RiotAccountDTO {
 	
 	//Constuctor
 	public RiotAccountDTO() {
+		
+	}
+	
+	public RiotAccountDTO(RiotAccount riotAccount) {
+		
+		this.gameName = riotAccount.getGameName();
+		this.tagLine = riotAccount.getTagLine();
+		this.puuid = riotAccount.getPuuid();
 		
 	}
 

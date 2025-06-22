@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.transaction.Transactional;
 import opgg.dto.GoogleDTO;
 import opgg.entity.GoogleUser;
 import opgg.repository.GoogleRepository;
@@ -43,12 +44,10 @@ public class GoogleLoginRestController {
 			
 			System.out.println(googleDTO);
 			
-			if(optionalUser.isPresent()) {
-				return googleDTO.getEmail();
+			if(optionalUser.isEmpty()) {
+				GoogleUser newUser = GoogleUser.of(googleDTO.getId(), googleDTO.getEmail(), googleDTO.getName(), googleDTO.getPicture());
+				googleRepository.save(newUser);
 			}
-			
-			GoogleUser newUser = GoogleUser.of(googleDTO.getId(), googleDTO.getEmail(), googleDTO.getName(), googleDTO.getPicture());
-			googleRepository.save(newUser);
 			
 			return googleDTO.getEmail();
 			
