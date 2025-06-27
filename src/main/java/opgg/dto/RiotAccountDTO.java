@@ -8,6 +8,8 @@ public class RiotAccountDTO {
 	private String gameName;
 	private String tagLine;
 	private String puuid;
+	private long profileIconId;
+	private long summonerLevel;
 	
 	//Constuctor
 	public RiotAccountDTO() {
@@ -20,6 +22,14 @@ public class RiotAccountDTO {
 		this.tagLine = riotAccount.getTagLine();
 		this.puuid = riotAccount.getPuuid();
 		
+	}
+
+	public RiotAccountDTO(String gameName, String tagLine, String puuid, long profileIconId, long summonerLevel) {
+		this.gameName = gameName;
+		this.tagLine = tagLine;
+		this.puuid = puuid;
+		this.profileIconId = profileIconId;
+		this.summonerLevel = summonerLevel;
 	}
 
 	//Getter & Setter
@@ -45,6 +55,22 @@ public class RiotAccountDTO {
 
 	public void setPuuid(String puuid) {
 		this.puuid = puuid;
+	}
+
+	public long getProfileIconId() {
+		return profileIconId;
+	}
+
+	public void setProfileIconId(long profileIconId) {
+		this.profileIconId = profileIconId;
+	}
+
+	public long getSummonerLevel() {
+		return summonerLevel;
+	}
+
+	public void setSummonerLevel(long summonerLevel) {
+		this.summonerLevel = summonerLevel;
 	}
 	
 }

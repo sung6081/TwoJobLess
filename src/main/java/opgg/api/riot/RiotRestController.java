@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.transaction.Transactional;
 import opgg.champion.ChampionMastery;
 import opgg.champion.RiotChampion;
 import opgg.dto.MatchDetailDTO;
@@ -42,21 +41,22 @@ public class RiotRestController {
       System.out.println("getRiotAccountWithGameName");
       
       RiotAccountDTO riotAccountDTO = riotService.getRiotAccountWithGameName(gameName, tagLine);
+      riotAccountDTO = riotService.getSummonerByPuuid(riotAccountDTO);
       
       Optional<RiotAccount> optional = riotAccountRepository.findByPuuid(riotAccountDTO.getPuuid());
-      RiotAccount riotAccount = optional.get();
       
       //처음 검색되었다면 insert
       if(optional.isEmpty()) {
     	  RiotAccount newAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine());
     	  riotAccountRepository.save(newAccount);
-      }
-      //기존 닉네임이나 tag가 변경되었다면 update
-      else if(!riotAccount.getGameName().equals(riotAccountDTO.getGameName()) || !riotAccount.getTagLine().equals(riotAccountDTO.getTagLine())) {
-    	  
-    	  RiotAccount updateAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine());
-    	  riotAccountRepository.save(updateAccount);
-    	  
+      }else {
+    	  RiotAccount riotAccount = optional.get();
+    	  if(!riotAccount.getGameName().equals(riotAccountDTO.getGameName()) || !riotAccount.getTagLine().equals(riotAccountDTO.getTagLine())) {
+        	  
+        	  RiotAccount updateAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine());
+        	  riotAccountRepository.save(updateAccount);
+        	  
+          }
       }
       
       return riotAccountDTO;

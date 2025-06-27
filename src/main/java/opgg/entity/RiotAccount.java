@@ -1,15 +1,9 @@
 package opgg.entity;
 
-import java.util.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "RiotAccount")
@@ -19,11 +13,17 @@ public class RiotAccount {
 	@Column(name = "puuid", length = 100, nullable = false)
 	private String puuid;
 	
-	@Column(name = "game_name", length = 50, nullable = false)
+	@Column(name = "game_name", length = 100, nullable = false)
 	private String gameName;
 	
-	@Column(name = "tag_line", length = 50, nullable = false)
+	@Column(name = "tag_line", length = 100, nullable = false)
 	private String tagLine;
+	
+	@Column(name = "profile_icon_id")
+	private long profileIconId;
+	
+	@Column(name = "summoner_level")
+	private long summonerLevel;
 	
 	//Constructor
 	public RiotAccount() {
@@ -31,7 +31,6 @@ public class RiotAccount {
 	}
 	
 	public RiotAccount(String puuid, String gameName, String tagLine) {
-		super();
 		this.puuid = puuid;
 		this.gameName = gameName;
 		this.tagLine = tagLine;
@@ -41,6 +40,14 @@ public class RiotAccount {
 		return new RiotAccount(puuid, gameName, tagLine);
 	}
 	
+	public RiotAccount(String puuid, String gameName, String tagLine, long profileIconId, long summonerLevel) {
+		this.puuid = puuid;
+		this.gameName = gameName;
+		this.tagLine = tagLine;
+		this.profileIconId = profileIconId;
+		this.summonerLevel = summonerLevel;
+	}
+
 	//Getter & Setter
 	public String getPuuid() {
 		return puuid;
@@ -64,6 +71,22 @@ public class RiotAccount {
 
 	public void setTagLine(String tagLine) {
 		this.tagLine = tagLine;
+	}
+
+	public long getProfileIconId() {
+		return profileIconId;
+	}
+
+	public void setProfileIconId(long profileIconId) {
+		this.profileIconId = profileIconId;
+	}
+
+	public long getSummonerLevel() {
+		return summonerLevel;
+	}
+
+	public void setSummonerLevel(long summonerLevel) {
+		this.summonerLevel = summonerLevel;
 	}
 	
 }

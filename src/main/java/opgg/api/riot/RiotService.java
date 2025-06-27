@@ -21,6 +21,8 @@ public interface RiotService {
 	
 	public RiotAccountDTO getRiotAccountWithGameName(String gameName, String tagLine);
 	
+	public RiotAccountDTO getSummonerByPuuid(RiotAccountDTO riotAccountDT);
+	
 	public List<ChampionMastery> getMasteryWithGameName(String puuid, Map<String, String> mappingIdWithKey);
 
 	List<MatchDetailDTO> getRecentMatchDetail(String gameName, String tagLine);
