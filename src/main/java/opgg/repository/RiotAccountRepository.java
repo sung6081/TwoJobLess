@@ -15,6 +15,6 @@ public interface RiotAccountRepository extends JpaRepository<RiotAccount, String
 	Optional<RiotAccount> findByPuuid(String puuid);
 	
 	@Transactional
-	List<RiotAccount> findByGameNameLikeOrderByGameNameDesc(String gameName, Limit limit);
+	List<RiotAccount> findByGameNameContainingOrderByGameNameDesc(String gameName, Limit limit);
 	
 }

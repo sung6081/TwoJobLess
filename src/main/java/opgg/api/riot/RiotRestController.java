@@ -64,13 +64,15 @@ public class RiotRestController {
    }
    
    @GetMapping("getRiotAccountsWithGameNameLike/{gameNamePart}")
-   public List<RiotAccountDTO> getRiotAccountsWithGameNameLike(@PathVariable String gameNamePart) throws Exception {
+   public List<RiotAccountDTO> getRiotAccountsWithGameNameLike(@PathVariable("gameNamePart") String gameNamePart) throws Exception {
 	   
 	   System.out.println("getRiotAccountsWithGameNameLike");
 	   
+	   System.out.println("gameNamePart : " + gameNamePart);
+	   
 	   List<RiotAccountDTO> riotAccounts = new ArrayList<RiotAccountDTO>();
 	   
-	   List<RiotAccount> list = riotAccountRepository.findByGameNameLikeOrderByGameNameDesc(gameNamePart, Limit.of(3));
+	   List<RiotAccount> list = riotAccountRepository.findByGameNameContainingOrderByGameNameDesc(gameNamePart, Limit.of(3));
 	   
 	   for(int i = 0; i < list.size(); i++) {
 		   riotAccounts.add(new RiotAccountDTO(list.get(i)));
