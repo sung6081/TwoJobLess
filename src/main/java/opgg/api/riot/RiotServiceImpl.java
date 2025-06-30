@@ -277,12 +277,41 @@ public class RiotServiceImpl implements RiotService {
             riotAccountDTO = objectMapper.readValue(responseBody, RiotAccountDTO.class);
         } catch (Exception e) {
             e.printStackTrace();
+            return riotAccountDTO;
         }
 		
 		System.out.println("end getRiotAccountWithGameName api");
 		
 		return riotAccountDTO;
 	}
+    
+    @Override
+    public RiotAccountDTO getRiotAccountWithPuuid(String puuid) {
+    	
+    	System.out.println("start getRiotAccountWithPuuid");
+    	
+    	RiotAccountDTO riotAccountDTO = new RiotAccountDTO();
+    	
+    	String url = "https://asia.api.riotgames.com/riot/account/v1/accounts/by-puuid/" + puuid + "?api_key=" + apiKey;
+    	
+    	System.out.println("url : "+url);
+    	
+    	String responseBody = get(url);
+    	
+    	ObjectMapper objectMapper = new ObjectMapper();
+		
+		try {
+            riotAccountDTO = objectMapper.readValue(responseBody, RiotAccountDTO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return riotAccountDTO;
+        }
+    	
+    	System.out.println("end getRiotAccountWithPuuid");
+    	
+    	return riotAccountDTO;
+    	
+    }
     
     @Override
 	public RiotAccountDTO getSummonerByPuuid(RiotAccountDTO riotAccountDTO) {

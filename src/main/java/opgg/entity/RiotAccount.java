@@ -1,9 +1,12 @@
 package opgg.entity;
 
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import opgg.dto.RiotAccountDTO;
 
 @Entity
 @Table(name = "RiotAccount")
@@ -91,6 +94,25 @@ public class RiotAccount {
 
 	public void setSummonerLevel(long summonerLevel) {
 		this.summonerLevel = summonerLevel;
+	}
+
+	public boolean compare(RiotAccountDTO riotAccountDTO) {
+		
+		if(!this.gameName.equals(riotAccountDTO.getGameName())) {
+			return false;
+		}
+		if(!this.tagLine.equals(riotAccountDTO.getTagLine())) {
+			return false;
+		}
+		if(this.profileIconId != riotAccountDTO.getProfileIconId()) {
+			return false;
+		}
+		if(this.summonerLevel != riotAccountDTO.getSummonerLevel()) {
+			return false;
+		}
+		
+		return true;
+		
 	}
 	
 }

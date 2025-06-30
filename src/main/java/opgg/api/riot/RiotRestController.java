@@ -8,10 +8,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Limit;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import opgg.champion.ChampionMastery;
@@ -33,7 +35,7 @@ public class RiotRestController {
    @Autowired
    private RiotAccountRepository riotAccountRepository;
    
-   @GetMapping("getPuuidFromGameName/{gameName}/{tagLine}")
+   @GetMapping("getRiotAccountWithGameName/{gameName}/{tagLine}")
    public RiotAccountDTO getRiotAccountWithGameName(
          @PathVariable("gameName") String gameName, 
          @PathVariable("tagLine") String tagLine) throws Exception {
@@ -51,12 +53,40 @@ public class RiotRestController {
     	  riotAccountRepository.save(newAccount);
       }else {
     	  RiotAccount riotAccount = optional.get();
-    	  RiotAccount updateAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine(), riotAccountDTO.getProfileIconId(), riotAccountDTO.getSummonerLevel());
-    	  riotAccountRepository.save(updateAccount);
+    	  if(!riotAccount.compare(riotAccountDTO)) {
+	    	  RiotAccount updateAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine(), riotAccountDTO.getProfileIconId(), riotAccountDTO.getSummonerLevel());
+	    	  riotAccountRepository.save(updateAccount);
+    	  }
       }
       
       return riotAccountDTO;
       
+   }
+   
+   @GetMapping("getRiotAccountWithPPuid/{puuid}")
+   public RiotAccountDTO getRiotAccountWithPPuid(@PathVariable("puuid") String puuid) {
+	   
+	   System.out.println("getRiotAccountWithPPuid");
+	   
+	   RiotAccountDTO riotAccountDTO = riotService.getRiotAccountWithPuuid(puuid);
+	   riotAccountDTO = riotService.getSummonerByPuuid(riotAccountDTO);
+	   
+	   Optional<RiotAccount> optional = riotAccountRepository.findByPuuid(riotAccountDTO.getPuuid());
+	      
+	      //처음 검색되었다면 insert
+	      if(optional.isEmpty()) {
+	    	  RiotAccount newAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine(), riotAccountDTO.getProfileIconId(), riotAccountDTO.getSummonerLevel());
+	    	  riotAccountRepository.save(newAccount);
+	      }else {
+	    	  RiotAccount riotAccount = optional.get();
+	    	  if(!riotAccount.compare(riotAccountDTO)) {
+		    	  RiotAccount updateAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine(), riotAccountDTO.getProfileIconId(), riotAccountDTO.getSummonerLevel());
+		    	  riotAccountRepository.save(updateAccount);
+	    	  }
+	      }
+	   
+	   return riotAccountDTO;
+	   
    }
    
    @GetMapping("getRiotAccountsWithGameNameLike/{gameNamePart}")
