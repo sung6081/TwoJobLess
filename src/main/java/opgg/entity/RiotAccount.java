@@ -40,6 +40,10 @@ public class RiotAccount {
 		return new RiotAccount(puuid, gameName, tagLine);
 	}
 	
+	public static RiotAccount of(String puuid, String gameName, String tagLine, long profileIconId, long summonerLevel) {
+		return new RiotAccount(puuid, gameName, tagLine, profileIconId, summonerLevel);
+	}
+	
 	public RiotAccount(String puuid, String gameName, String tagLine, long profileIconId, long summonerLevel) {
 		this.puuid = puuid;
 		this.gameName = gameName;

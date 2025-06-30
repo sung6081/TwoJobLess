@@ -47,16 +47,12 @@ public class RiotRestController {
       
       //처음 검색되었다면 insert
       if(optional.isEmpty()) {
-    	  RiotAccount newAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine());
+    	  RiotAccount newAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine(), riotAccountDTO.getProfileIconId(), riotAccountDTO.getSummonerLevel());
     	  riotAccountRepository.save(newAccount);
       }else {
     	  RiotAccount riotAccount = optional.get();
-    	  if(!riotAccount.getGameName().equals(riotAccountDTO.getGameName()) || !riotAccount.getTagLine().equals(riotAccountDTO.getTagLine())) {
-        	  
-        	  RiotAccount updateAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine());
-        	  riotAccountRepository.save(updateAccount);
-        	  
-          }
+    	  RiotAccount updateAccount = new RiotAccount().of(riotAccountDTO.getPuuid(), riotAccountDTO.getGameName(), riotAccountDTO.getTagLine(), riotAccountDTO.getProfileIconId(), riotAccountDTO.getSummonerLevel());
+    	  riotAccountRepository.save(updateAccount);
       }
       
       return riotAccountDTO;

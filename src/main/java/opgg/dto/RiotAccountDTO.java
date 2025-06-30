@@ -21,6 +21,8 @@ public class RiotAccountDTO {
 		this.gameName = riotAccount.getGameName();
 		this.tagLine = riotAccount.getTagLine();
 		this.puuid = riotAccount.getPuuid();
+		this.profileIconId = riotAccount.getProfileIconId();
+		this.summonerLevel = riotAccount.getSummonerLevel();
 		
 	}
 
