@@ -14,6 +14,10 @@ public interface UserService {
     UserDTO login(String email, String password);
 
     void deleteUser(Long id);
+
+    boolean isEmailDuplicate(String email);
+
+    void resendVerificationEmail(String email);
     
-    
+    void sendVerificationEmailOnly(String email);
 }

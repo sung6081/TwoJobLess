@@ -23,25 +23,54 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private EmailService emailService;
 
-    // 회원가입
+    @Autowired
+    private EmailVerificationService emailVerificationService;
+
     @Override
     public void addUser(UserDTO userDTO) {
-        String token = UUID.randomUUID().toString();
+        if (!emailVerificationService.isEmailVerified(userDTO.getEmail())) {
+            throw new RuntimeException("이메일 인증이 완료되지 않았습니다.");
+        }
+
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new RuntimeException("이미 존재하는 이메일입니다.");
+        }
 
         User user = User.builder()
                 .name(userDTO.getName())
-                .password(userDTO.getPassword()) // 평문 그대로 저장
+                .password(userDTO.getPassword())
                 .cellPhone(userDTO.getCellPhone())
                 .email(userDTO.getEmail())
-                .verifyToken(token)
-                .isVerified(false)
+                .isVerified(true)
                 .build();
 
         userRepository.save(user);
-        emailService.sendVerificationEmail(user.getEmail(), token);
+        emailVerificationService.clearVerification(userDTO.getEmail());
     }
 
-    // 유저 한 명 조회
+    @Override
+    public boolean isEmailDuplicate(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public void resendVerificationEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("해당 이메일의 사용자가 존재하지 않습니다.");
+        }
+
+        User user = optionalUser.get();
+
+        if (user.isVerified()) {
+            throw new RuntimeException("이미 인증된 사용자입니다.");
+        }
+
+        String newToken = UUID.randomUUID().toString();
+        emailVerificationService.saveToken(email, newToken);
+        emailService.sendVerificationEmail(user.getEmail(), newToken);
+    }
+
     @Override
     public UserDTO getUser(Long id) {
         User user = userRepository.findById(id)
@@ -49,7 +78,6 @@ public class UserServiceImpl implements UserService {
         return toDTO(user);
     }
 
-    // 유저 전체 목록 조회
     @Override
     public List<UserDTO> getUserList() {
         return userRepository.findAll()
@@ -58,7 +86,6 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    // 로그인
     @Override
     public UserDTO login(String email, String password) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
@@ -73,21 +100,30 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
+        if (!user.isVerified()) {
+            throw new RuntimeException("이메일 인증이 완료되지 않았습니다.");
+        }
+
         return toDTO(user);
     }
 
-    // 유저 삭제 (옵션)
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
-    // 내부 변환 메서드
+    @Override
+    public void sendVerificationEmailOnly(String email) {
+        String token = UUID.randomUUID().toString();
+        emailVerificationService.saveToken(email, token);
+        emailService.sendVerificationEmail(email, token);
+    }
+
     private UserDTO toDTO(User user) {
         return new UserDTO(
                 user.getId(),
                 user.getName(),
-                user.getPassword(), // 그대로 반환
+                user.getPassword(),
                 user.getCellPhone(),
                 user.getEmail(),
                 user.getRegDate()
