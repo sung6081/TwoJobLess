@@ -19,12 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 import opgg.champion.ChampionMastery;
 import opgg.champion.RiotChampion;
 import opgg.dto.MatchDetailDTO;
+import opgg.dto.RankDTO;
 import opgg.dto.RiotAccountDTO;
 import opgg.entity.RiotAccount;
 import opgg.repository.RiotAccountRepository;
 
 @RestController
-@RequestMapping("/opgg/riotapi/*")
+@RequestMapping("/opgg/riotapi")
 @CrossOrigin(origins = "http://localhost:3000")
 public class RiotRestController {
 
@@ -143,4 +144,41 @@ public class RiotRestController {
        return riotService.getRecentMatchDetail(gameName, tagLine);
    }
    
+   //유저 랭크조회
+   @GetMapping("getRankByGameName/{gameName}/{tagLine}")
+   public List<RankDTO> getRankByGameName(
+           @PathVariable String gameName,
+           @PathVariable String tagLine) {
+
+       System.out.println("getRankByGameName");
+
+       // ① Riot ID → PUUID
+       RiotAccountDTO account = riotService.getRiotAccountWithGameName(gameName, tagLine);
+       if (account == null) {
+           throw new RuntimeException("해당 Riot ID(" + gameName + "#" + tagLine + ")를 찾을 수 없습니다.");
+       }
+
+       account = riotService.getSummonerByPuuid(account);   // 프로필 아이콘·레벨 등 갱신
+       String puuid = account.getPuuid();
+       if (puuid == null || puuid.isEmpty()) {
+           throw new RuntimeException("PUUID가 존재하지 않습니다.");
+       }
+
+       // ② PUUID 기반 랭크 조회
+       return riotService.getRankByPuuid(puuid);
+   }
+   
+   
+   @GetMapping("getPuuid/{gameName}/{tagLine}")
+   public String getPuuid(
+           @PathVariable String gameName,
+           @PathVariable String tagLine) {
+
+       RiotAccountDTO dto = riotService.getRiotAccountWithGameName(gameName, tagLine);
+       if (dto == null || dto.getPuuid() == null) {
+           throw new RuntimeException("해당 Riot ID를 찾을 수 없습니다.");
+       }
+       return dto.getPuuid();    // PUUID 문자열만 반환
+   }
+
 }

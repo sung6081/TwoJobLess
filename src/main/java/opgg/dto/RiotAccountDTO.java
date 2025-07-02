@@ -10,6 +10,7 @@ public class RiotAccountDTO {
 	private String puuid;
 	private long profileIconId;
 	private long summonerLevel;
+	private String id;
 	
 	//Constuctor
 	public RiotAccountDTO() {
@@ -35,8 +36,17 @@ public class RiotAccountDTO {
 	}
 
 	//Getter & Setter
+	
 	public String getGameName() {
 		return gameName;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public void setGameName(String gameName) {

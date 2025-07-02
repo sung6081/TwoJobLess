@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import opgg.champion.ChampionMastery;
 import opgg.champion.RiotChampion;
 import opgg.dto.MatchDetailDTO;
+import opgg.dto.RankDTO;
 import opgg.dto.RiotAccountDTO;
 
 public interface RiotService {
@@ -30,5 +31,7 @@ public interface RiotService {
 	List<MatchDetailDTO> getRecentMatchDetail(String gameName, String tagLine);
 
 	MatchDetailDTO getMatchDetail(String matchId, String puuid);
+
+	List<RankDTO> getRankByPuuid(String puuid);
 	
 }
