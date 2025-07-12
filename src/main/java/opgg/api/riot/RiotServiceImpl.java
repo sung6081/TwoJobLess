@@ -242,7 +242,8 @@ public class RiotServiceImpl implements RiotService {
 
         try {
             JSONObject summonerInfo = new JSONObject(responseBody);
-            riotAccountDTO.setId(summonerInfo.getString("id"));
+            System.out.println(summonerInfo);
+            //riotAccountDTO.setId(summonerInfo.getString("id"));
             riotAccountDTO.setProfileIconId(summonerInfo.getLong("profileIconId"));
             riotAccountDTO.setSummonerLevel(summonerInfo.getLong("summonerLevel"));
         } catch (Exception e) {
