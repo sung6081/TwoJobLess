@@ -147,8 +147,8 @@ public class RiotRestController {
    //유저 랭크조회
    @GetMapping("getRankByGameName/{gameName}/{tagLine}")
    public List<RankDTO> getRankByGameName(
-           @PathVariable String gameName,
-           @PathVariable String tagLine) {
+           @PathVariable("gameName") String gameName,
+           @PathVariable("tagLine") String tagLine) {
 
        System.out.println("getRankByGameName");
 
@@ -171,8 +171,8 @@ public class RiotRestController {
    
    @GetMapping("getPuuid/{gameName}/{tagLine}")
    public String getPuuid(
-           @PathVariable String gameName,
-           @PathVariable String tagLine) {
+           @PathVariable("gameName") String gameName,
+           @PathVariable("tagLine") String tagLine) {
 
        RiotAccountDTO dto = riotService.getRiotAccountWithGameName(gameName, tagLine);
        if (dto == null || dto.getPuuid() == null) {
