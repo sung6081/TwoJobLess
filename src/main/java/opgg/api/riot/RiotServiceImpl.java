@@ -272,7 +272,7 @@ public class RiotServiceImpl implements RiotService {
     }
 
     public List<String> getMatchIdsByPuuid(String puuid) {
-        String url = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=0&count=5&api_key=" + apiKey;
+        String url = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=0&count=100&api_key=" + apiKey;
         List<String> matchIds = new ArrayList<>();
 
         try {
@@ -397,5 +397,44 @@ public class RiotServiceImpl implements RiotService {
         System.out.println("end getRankByPuuid");
         return ranks;
     }
+    
+    //카테고리
+    public Map<String, Map<String, List<MatchDetailDTO>>> getRecentMatchDetailCategorized(String gameName, String tagLine) {
+        RiotAccountDTO account = getRiotAccountWithGameName(gameName, tagLine);
+        if (account == null || account.getPuuid() == null) return Collections.emptyMap();
+
+        String puuid = account.getPuuid();
+        List<String> matchIds = getMatchIdsByPuuid(puuid);
+        Map<String, Map<String, List<MatchDetailDTO>>> categorized = new HashMap<>();
+
+        for (String matchId : matchIds) {
+            MatchDetailDTO detail = getMatchDetail(matchId, puuid);
+            if (detail == null) continue;
+
+            //게임 모드를 한글로 변환
+            String gameModeKo = getGameModeKo(detail.getGameMode());
+            String result = detail.isWin() ? "win" : "lose";
+
+            categorized
+                .computeIfAbsent(gameModeKo, k -> new HashMap<>())
+                .computeIfAbsent(result, k -> new ArrayList<>())
+                .add(detail);
+        }
+
+        return categorized;
+    }
+    
+    
+    private String getGameModeKo(String gameMode) {
+        return switch (gameMode) {
+            case "CLASSIC" -> "소환사의 협곡";
+            case "ARAM" -> "칼바람 나락";
+            case "URF" -> "우르프";
+            case "ONEFORALL" -> "단일 챔피언 모드";
+            case "PRACTICETOOL" -> "연습 모드";
+            default -> "기타";
+        };
+    }
+
 
 }

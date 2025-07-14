@@ -181,4 +181,12 @@ public class RiotRestController {
        return dto.getPuuid();    // PUUID 문자열만 반환
    }
 
+   //카테고리
+   @GetMapping("/getRecentMatchesCategorized/{gameName}/{tagLine}")
+   public Map<String, Map<String, List<MatchDetailDTO>>> getCategorizedMatches(
+           @PathVariable String gameName,
+           @PathVariable String tagLine) {
+       return riotService.getRecentMatchDetailCategorized(gameName, tagLine);
+   }
+
 }

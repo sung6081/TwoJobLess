@@ -34,4 +34,7 @@ public interface RiotService {
 
 	List<RankDTO> getRankByPuuid(String puuid);
 	
+	Map<String, Map<String, List<MatchDetailDTO>>> getRecentMatchDetailCategorized(String gameName, String tagLine);
+	
+	
 }
