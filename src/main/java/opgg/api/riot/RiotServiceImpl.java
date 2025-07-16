@@ -12,8 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -148,6 +150,47 @@ public class RiotServiceImpl implements RiotService {
 
         System.out.println("end getRotationChamps api");
         return list;
+    }
+    
+    @Override
+    public List<RiotChampion> getAllChamps(Map<String, String> mappingIdWithKey) {
+    
+    	System.out.println("start getAllChamps");
+    	
+    	List<RiotChampion> champions = new ArrayList<>();
+    	
+    	String rotationUrl = "https://kr.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=" + apiKey;
+    	String rotationResponse = get(rotationUrl);
+    	
+    	Set<String> rotationBook = new HashSet<>();
+    	
+    	try {
+    		
+    		JSONObject rotationInfo = new JSONObject(rotationResponse);
+            JSONArray rotation = rotationInfo.getJSONArray("freeChampionIds");
+            for(int i = 0; i < rotation.length(); i++) {
+            	rotationBook.add(new Integer(rotation.getInt(i)).toString());
+            }
+            
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	Set<String> ids = mappingIdWithKey.keySet();
+    	for(String id : ids) {
+    		
+    		RiotChampion champ = getChampion(Integer.parseInt(id), mappingIdWithKey);
+    		if(rotationBook.contains(id)) {
+    			champ.setRotation(true);
+    		}
+    		champions.add(champ);
+    		
+    	}
+    	
+    	System.out.println("end getAllChamps");
+    	
+    	return champions;
+    	
     }
 
     @Override
@@ -329,45 +372,6 @@ public class RiotServiceImpl implements RiotService {
         return null;
     }
 
-
-    private static String get(String apiUrl) {
-        HttpURLConnection con = connect(apiUrl);
-        try {
-            con.setRequestMethod("GET");
-            int responseCode = con.getResponseCode();
-            return (responseCode == HttpURLConnection.HTTP_OK) ? readBody(con.getInputStream()) : readBody(con.getErrorStream());
-        } catch (IOException e) {
-            throw new RuntimeException("API 요청과 응답 실패", e);
-        } finally {
-            con.disconnect();
-        }
-    }
-
-    private static HttpURLConnection connect(String apiUrl) {
-        try {
-            URL url = new URL(apiUrl);
-            return (HttpURLConnection) url.openConnection();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("API URL이 잘못되었습니다. : " + apiUrl, e);
-        } catch (IOException e) {
-            throw new RuntimeException("연결이 실패했습니다. : " + apiUrl, e);
-        }
-    }
-
-    private static String readBody(InputStream body) {
-        InputStreamReader streamReader = new InputStreamReader(body);
-        try (BufferedReader lineReader = new BufferedReader(streamReader)) {
-            StringBuilder responseBody = new StringBuilder();
-            String line;
-            while ((line = lineReader.readLine()) != null) {
-                responseBody.append(line);
-            }
-            return responseBody.toString();
-        } catch (IOException e) {
-            throw new RuntimeException("API 응답을 읽는 데 실패했습니다.", e);
-        }
-    }
-
     @Override
     public List<RankDTO> getRankByPuuid(String puuid) {
         System.out.println("start getRankByPuuid");
@@ -433,8 +437,45 @@ public class RiotServiceImpl implements RiotService {
 
         return categorized;
     }
-    
-    
+
+    private static String get(String apiUrl) {
+        HttpURLConnection con = connect(apiUrl);
+        try {
+            con.setRequestMethod("GET");
+            int responseCode = con.getResponseCode();
+            return (responseCode == HttpURLConnection.HTTP_OK) ? readBody(con.getInputStream()) : readBody(con.getErrorStream());
+        } catch (IOException e) {
+            throw new RuntimeException("API 요청과 응답 실패", e);
+        } finally {
+            con.disconnect();
+        }
+    }
+
+    private static HttpURLConnection connect(String apiUrl) {
+        try {
+            URL url = new URL(apiUrl);
+            return (HttpURLConnection) url.openConnection();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("API URL이 잘못되었습니다. : " + apiUrl, e);
+        } catch (IOException e) {
+            throw new RuntimeException("연결이 실패했습니다. : " + apiUrl, e);
+        }
+    }
+
+    private static String readBody(InputStream body) {
+        InputStreamReader streamReader = new InputStreamReader(body);
+        try (BufferedReader lineReader = new BufferedReader(streamReader)) {
+            StringBuilder responseBody = new StringBuilder();
+            String line;
+            while ((line = lineReader.readLine()) != null) {
+                responseBody.append(line);
+            }
+            return responseBody.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("API 응답을 읽는 데 실패했습니다.", e);
+        }
+    }
+
     private String getGameModeKo(String gameMode) {
         return switch (gameMode) {
             case "CLASSIC" -> "소환사의 협곡";

@@ -2,12 +2,15 @@ package opgg.dto;
 
 public class RankDTO {
 	
+		//Field
 	    private String queueType;
 	    private String tier;
 	    private String rank;
 	    private int leaguePoints;
 	    private int wins;
 	    private int losses;
+	    
+	    //Getter & Setter
 		public String getQueueType() {
 			return queueType;
 		}
@@ -45,6 +48,4 @@ public class RankDTO {
 			this.losses = losses;
 		}
 	    
-	    
-
 }

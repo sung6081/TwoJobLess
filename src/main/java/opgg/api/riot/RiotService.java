@@ -20,6 +20,8 @@ public interface RiotService {
 	
 	public List<RiotChampion> getRotationChamps(Map<String, String> mappingIdWithKey);
 	
+	public List<RiotChampion> getAllChamps(Map<String, String> mappingIdWithKey);
+	
 	public RiotAccountDTO getRiotAccountWithGameName(String gameName, String tagLine);
 	
 	public RiotAccountDTO getRiotAccountWithPuuid(String puuid);
@@ -28,13 +30,13 @@ public interface RiotService {
 	
 	public List<ChampionMastery> getMasteryWithGameName(String puuid, Map<String, String> mappingIdWithKey);
 
-	List<MatchDetailDTO> getRecentMatchDetail(String gameName, String tagLine);
+	public List<MatchDetailDTO> getRecentMatchDetail(String gameName, String tagLine);
 
-	MatchDetailDTO getMatchDetail(String matchId, String puuid);
+	public MatchDetailDTO getMatchDetail(String matchId, String puuid);
 
-	List<RankDTO> getRankByPuuid(String puuid);
+	public List<RankDTO> getRankByPuuid(String puuid);
 	
-	Map<String, Map<String, List<MatchDetailDTO>>> getRecentMatchDetailCategorized(String gameName, String tagLine);
+	public Map<String, Map<String, List<MatchDetailDTO>>> getRecentMatchDetailCategorized(String gameName, String tagLine);
 	
 	
 }

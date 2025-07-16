@@ -15,6 +15,7 @@ public class RiotChampion {
 	private String passiveDescription; //pasive description
 	private String passiveImage; //passive image
 	private List<Skill> skills;
+	private boolean isRotation; //로테이션 여부
 	
 	//Constructor
 	public RiotChampion() {
@@ -34,6 +35,7 @@ public class RiotChampion {
 		this.passiveDescription = passiveDescription;
 		this.passiveImage = passiveImage;
 		this.skills = skills;
+		this.isRotation = false;
 	}
 
 	//Getter & Setter
@@ -117,11 +119,19 @@ public class RiotChampion {
 		this.skills = skills;
 	}
 
+	public boolean isRotation() {
+		return isRotation;
+	}
+
+	public void setRotation(boolean isRotation) {
+		this.isRotation = isRotation;
+	}
+
 	@Override
 	public String toString() {
 		return "RiotChampion [id=" + id + ", key=" + key + ", name=" + name + ", title=" + title + ", image=" + image
-				+ ",\n lore=" + lore + ", passive=" + passive + ", passiveDescription=" + passiveDescription
-				+ ", passiveImage=" + passiveImage + ",\n skills=" + skills + "]";
+				+ ", lore=" + lore + ", passive=" + passive + ", passiveDescription=" + passiveDescription
+				+ ", passiveImage=" + passiveImage + ", skills=" + skills + ", isRotation=" + isRotation + "]";
 	}
 	
 }

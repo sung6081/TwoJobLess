@@ -134,6 +134,15 @@ public class RiotRestController {
       
    }
    
+   @GetMapping("getAllChamps")
+   public List<RiotChampion> getAllChamps() throws Exception {
+	   
+	   System.out.println("getAllChamps");
+	   
+	   return riotService.getAllChamps(riotService.getNameAndKeyMapping());
+	   
+   }
+   
    @GetMapping("getRecentMatches/{gameName}/{tagLine}")
    public List<MatchDetailDTO> getRecentMatches(
            @PathVariable("gameName") String gameName,
@@ -184,8 +193,8 @@ public class RiotRestController {
    //카테고리
    @GetMapping("/getRecentMatchesCategorized/{gameName}/{tagLine}")
    public Map<String, Map<String, List<MatchDetailDTO>>> getCategorizedMatches(
-           @PathVariable String gameName,
-           @PathVariable String tagLine) {
+           @PathVariable("gameName") String gameName,
+           @PathVariable("tagLine") String tagLine) {
        return riotService.getRecentMatchDetailCategorized(gameName, tagLine);
    }
 
