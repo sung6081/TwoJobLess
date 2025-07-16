@@ -272,7 +272,7 @@ public class RiotServiceImpl implements RiotService {
     }
 
     public List<String> getMatchIdsByPuuid(String puuid) {
-        String url = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=0&count=100&api_key=" + apiKey;
+        String url = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=0&count=50&api_key=" + apiKey;
         List<String> matchIds = new ArrayList<>();
 
         try {
@@ -303,13 +303,22 @@ public class RiotServiceImpl implements RiotService {
                     MatchDetailDTO dto = new MatchDetailDTO();
                     dto.setMatchId(matchId);
                     dto.setGameMode(info.path("gameMode").asText());
+                    dto.setQueueId(info.path("queueId").asInt()); 
                     dto.setGameDuration(info.path("gameDuration").asLong());
+
                     dto.setChampionName(participant.path("championName").asText());
                     dto.setKills(participant.path("kills").asInt());
                     dto.setDeaths(participant.path("deaths").asInt());
                     dto.setAssists(participant.path("assists").asInt());
                     dto.setWin(participant.path("win").asBoolean());
                     dto.setSummonerName(participant.path("summonerName").asText());
+
+                    dto.setChampLevel(participant.path("champLevel").asInt());
+                    dto.setGoldEarned(participant.path("goldEarned").asInt());
+                    dto.setVisionScore(participant.path("visionScore").asInt());
+                    dto.setTotalMinionsKilled(participant.path("totalMinionsKilled").asInt());
+                    dto.setIndividualPosition(participant.path("individualPosition").asText());
+
                     return dto;
                 }
             }
@@ -319,6 +328,7 @@ public class RiotServiceImpl implements RiotService {
 
         return null;
     }
+
 
     private static String get(String apiUrl) {
         HttpURLConnection con = connect(apiUrl);

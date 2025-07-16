@@ -2,6 +2,7 @@ package opgg.dto;
 public class MatchDetailDTO {
     private String matchId;
     private String gameMode;
+    private int queueId;
     private long gameDuration;
     private String championName;
     private int kills;
@@ -9,6 +10,11 @@ public class MatchDetailDTO {
     private int assists;
     private boolean win;
     private String summonerName;
+    private int champLevel;
+    private int goldEarned;
+    private int visionScore;
+    private int totalMinionsKilled;
+    private String individualPosition;
 
     // --- 생성자 ---
     public MatchDetailDTO() {}
@@ -18,7 +24,55 @@ public class MatchDetailDTO {
         return matchId;
     }
 
-    public void setMatchId(String matchId) {
+    public int getQueueId() {
+		return queueId;
+	}
+
+	public void setQueueId(int queueId) {
+		this.queueId = queueId;
+	}
+
+	public int getChampLevel() {
+		return champLevel;
+	}
+
+	public void setChampLevel(int champLevel) {
+		this.champLevel = champLevel;
+	}
+
+	public int getGoldEarned() {
+		return goldEarned;
+	}
+
+	public void setGoldEarned(int goldEarned) {
+		this.goldEarned = goldEarned;
+	}
+
+	public int getVisionScore() {
+		return visionScore;
+	}
+
+	public void setVisionScore(int visionScore) {
+		this.visionScore = visionScore;
+	}
+
+	public int getTotalMinionsKilled() {
+		return totalMinionsKilled;
+	}
+
+	public void setTotalMinionsKilled(int totalMinionsKilled) {
+		this.totalMinionsKilled = totalMinionsKilled;
+	}
+
+	public String getIndividualPosition() {
+		return individualPosition;
+	}
+
+	public void setIndividualPosition(String individualPosition) {
+		this.individualPosition = individualPosition;
+	}
+
+	public void setMatchId(String matchId) {
         this.matchId = matchId;
     }
 
