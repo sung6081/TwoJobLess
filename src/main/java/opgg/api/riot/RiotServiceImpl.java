@@ -348,7 +348,8 @@ public class RiotServiceImpl implements RiotService {
                     dto.setGameMode(info.path("gameMode").asText());
                     dto.setQueueId(info.path("queueId").asInt()); 
                     dto.setGameDuration(info.path("gameDuration").asLong());
-
+                    dto.setGameCreation(info.path("gameCreation").asLong()); 
+                    
                     dto.setChampionName(participant.path("championName").asText());
                     dto.setKills(participant.path("kills").asInt());
                     dto.setDeaths(participant.path("deaths").asInt());

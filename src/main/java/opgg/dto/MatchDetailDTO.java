@@ -15,6 +15,7 @@ public class MatchDetailDTO {
     private int visionScore;
     private int totalMinionsKilled;
     private String individualPosition;
+    private long gameCreation;
 
     // --- 생성자 ---
     public MatchDetailDTO() {}
@@ -23,8 +24,17 @@ public class MatchDetailDTO {
     public String getMatchId() {
         return matchId;
     }
+    
 
-    public int getQueueId() {
+    public long getGameCreation() {
+		return gameCreation;
+	}
+
+	public void setGameCreation(long gameCreation) {
+		this.gameCreation = gameCreation;
+	}
+
+	public int getQueueId() {
 		return queueId;
 	}
 
