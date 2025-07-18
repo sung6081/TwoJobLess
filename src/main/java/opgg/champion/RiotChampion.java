@@ -10,6 +10,7 @@ public class RiotChampion {
 	private String name; //챔피언 이름
 	private String title;
 	private String image; //작은 사각 image
+	private String sprite; //전체 image
 	private String lore; //챔피언 설명
 	private String passive; //passive name
 	private String passiveDescription; //pasive description
@@ -22,7 +23,7 @@ public class RiotChampion {
 		
 	}
 
-	public RiotChampion(String id, int key, String name, String title, String image, String lore, String passive,
+	public RiotChampion(String id, int key, String name, String title, String image, String sprite, String lore, String passive,
 			String passiveDescription, String passiveImage, List<Skill> skills) {
 		super();
 		this.id = id;
@@ -30,6 +31,7 @@ public class RiotChampion {
 		this.name = name;
 		this.title = title;
 		this.image = image;
+		this.sprite = sprite;
 		this.lore = lore;
 		this.passive = passive;
 		this.passiveDescription = passiveDescription;
@@ -127,11 +129,20 @@ public class RiotChampion {
 		this.isRotation = isRotation;
 	}
 
+	public String getSprite() {
+		return sprite;
+	}
+
+	public void setSprite(String sprite) {
+		this.sprite = sprite;
+	}
+
 	@Override
 	public String toString() {
 		return "RiotChampion [id=" + id + ", key=" + key + ", name=" + name + ", title=" + title + ", image=" + image
-				+ ", lore=" + lore + ", passive=" + passive + ", passiveDescription=" + passiveDescription
-				+ ", passiveImage=" + passiveImage + ", skills=" + skills + ", isRotation=" + isRotation + "]";
+				+ ", sprite=" + sprite + ", lore=" + lore + ", passive=" + passive + ", passiveDescription="
+				+ passiveDescription + ", passiveImage=" + passiveImage + ", skills=" + skills + ", isRotation="
+				+ isRotation + "]";
 	}
 	
 }
