@@ -30,6 +30,7 @@ import opgg.champion.ChampionMastery;
 import opgg.champion.RiotChampion;
 import opgg.champion.Skill;
 import opgg.dto.MatchDetailDTO;
+import opgg.dto.ParticipantDetailDTO;
 import opgg.dto.RankDTO;
 import opgg.dto.RiotAccountDTO;
 
@@ -340,39 +341,83 @@ public class RiotServiceImpl implements RiotService {
             JsonNode root = objectMapper.readTree(responseBody);
 
             JsonNode info = root.path("info");
-            JsonNode participants = info.path("participants");
+            JsonNode participantsNode = info.path("participants");
+            JsonNode teamsNode = info.path("teams");
 
-            for (JsonNode participant : participants) {
+            // 팀 승리 여부 맵 생성 (teamId -> win)
+            Map<Integer, Boolean> teamWinMap = new HashMap<>();
+            for (JsonNode teamNode : teamsNode) {
+                int teamId = teamNode.path("teamId").asInt();
+                boolean win = "Win".equals(teamNode.path("win").asText());
+                teamWinMap.put(teamId, win);
+            }
+
+            List<ParticipantDetailDTO> participantList = new ArrayList<>();
+            MatchDetailDTO matchDetailDTO = null;
+
+            for (JsonNode participant : participantsNode) {
+                ParticipantDetailDTO p = new ParticipantDetailDTO();
+
+                p.setSummonerName(participant.path("summonerName").asText());
+                p.setRiotGameName(participant.path("riotIdGameName").asText(""));
+                p.setRiotTagLine(participant.path("riotIdTagline").asText(""));
+                p.setChampionName(participant.path("championName").asText());
+                p.setChampLevel(participant.path("champLevel").asInt());
+
+                p.setKills(participant.path("kills").asInt());
+                p.setDeaths(participant.path("deaths").asInt());
+                p.setAssists(participant.path("assists").asInt());
+
+                p.setItem0(participant.path("item0").asInt());
+                p.setItem1(participant.path("item1").asInt());
+                p.setItem2(participant.path("item2").asInt());
+                p.setItem3(participant.path("item3").asInt());
+                p.setItem4(participant.path("item4").asInt());
+                p.setItem5(participant.path("item5").asInt());
+                p.setItem6(participant.path("item6").asInt());
+
+                p.setSpell1Id(participant.path("summoner1Id").asInt());
+                p.setSpell2Id(participant.path("summoner2Id").asInt());
+
+                // 룬 정보 (메인/서브)
+                JsonNode perksStyles = participant.path("perks").path("styles");
+                if (perksStyles.isArray() && perksStyles.size() >= 2) {
+                    p.setMainRuneId(perksStyles.get(0).path("style").asInt());
+                    p.setSubRuneId(perksStyles.get(1).path("style").asInt());
+                }
+
+                p.setIndividualPosition(participant.path("individualPosition").asText());
+
+                int teamId = participant.path("teamId").asInt();
+                p.setTeamId(teamId);
+                p.setWin(teamWinMap.getOrDefault(teamId, false));
+
+                participantList.add(p);
+
+                // 내가 찾는 puuid면 matchDetailDTO에 개인 정보 세팅
                 if (participant.path("puuid").asText().equals(puuid)) {
-                    MatchDetailDTO dto = new MatchDetailDTO();
-                    dto.setMatchId(matchId);
-                    dto.setGameMode(info.path("gameMode").asText());
-                    dto.setQueueId(info.path("queueId").asInt()); 
-                    dto.setGameDuration(info.path("gameDuration").asLong());
-                    dto.setGameCreation(info.path("gameCreation").asLong()); 
-                    
-                    dto.setChampionName(participant.path("championName").asText());
-                    dto.setKills(participant.path("kills").asInt());
-                    dto.setDeaths(participant.path("deaths").asInt());
-                    dto.setAssists(participant.path("assists").asInt());
-                    dto.setWin(participant.path("win").asBoolean());
-                    dto.setSummonerName(participant.path("summonerName").asText());
-
-                    dto.setChampLevel(participant.path("champLevel").asInt());
-                    dto.setGoldEarned(participant.path("goldEarned").asInt());
-                    dto.setVisionScore(participant.path("visionScore").asInt());
-                    dto.setTotalMinionsKilled(participant.path("totalMinionsKilled").asInt());
-                    dto.setIndividualPosition(participant.path("individualPosition").asText());
-
-                    return dto;
+                    matchDetailDTO = new MatchDetailDTO();
+                    matchDetailDTO.setMatchId(matchId);
+                    matchDetailDTO.setGameMode(info.path("gameMode").asText());
+                    matchDetailDTO.setQueueId(info.path("queueId").asInt());
+                    matchDetailDTO.setGameDuration(info.path("gameDuration").asLong());
+                    matchDetailDTO.setGameCreation(info.path("gameCreation").asLong());
                 }
             }
+
+            if (matchDetailDTO != null) {
+                matchDetailDTO.setParticipants(participantList);
+            }
+
+            return matchDetailDTO;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
     }
+
 
     @Override
     public List<RankDTO> getRankByPuuid(String puuid) {
@@ -413,32 +458,7 @@ public class RiotServiceImpl implements RiotService {
         System.out.println("end getRankByPuuid");
         return ranks;
     }
-    
-    //카테고리
-    public Map<String, Map<String, List<MatchDetailDTO>>> getRecentMatchDetailCategorized(String gameName, String tagLine) {
-        RiotAccountDTO account = getRiotAccountWithGameName(gameName, tagLine);
-        if (account == null || account.getPuuid() == null) return Collections.emptyMap();
-
-        String puuid = account.getPuuid();
-        List<String> matchIds = getMatchIdsByPuuid(puuid);
-        Map<String, Map<String, List<MatchDetailDTO>>> categorized = new HashMap<>();
-
-        for (String matchId : matchIds) {
-            MatchDetailDTO detail = getMatchDetail(matchId, puuid);
-            if (detail == null) continue;
-
-            //게임 모드를 한글로 변환
-            String gameModeKo = getGameModeKo(detail.getGameMode());
-            String result = detail.isWin() ? "win" : "lose";
-
-            categorized
-                .computeIfAbsent(gameModeKo, k -> new HashMap<>())
-                .computeIfAbsent(result, k -> new ArrayList<>())
-                .add(detail);
-        }
-
-        return categorized;
-    }
+   
 
     private static String get(String apiUrl) {
         HttpURLConnection con = connect(apiUrl);
@@ -488,6 +508,13 @@ public class RiotServiceImpl implements RiotService {
             default -> "기타";
         };
     }
+
+	@Override
+	public Map<String, Map<String, List<MatchDetailDTO>>> getRecentMatchDetailCategorized(String gameName,
+			String tagLine) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 }
