@@ -2,7 +2,7 @@ package opgg.dto;
 
 import opgg.champion.RiotChampion;
 
-public class Player {
+public class PlayerDTO {
 
 	//Field
 	private String puuid;

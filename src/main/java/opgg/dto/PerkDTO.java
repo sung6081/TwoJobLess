@@ -1,6 +1,6 @@
 package opgg.dto;
 
-public class Perk {
+public class PerkDTO {
 
 	//Field
 	private long perkStyle;

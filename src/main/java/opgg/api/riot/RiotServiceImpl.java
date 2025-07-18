@@ -91,7 +91,7 @@ public class RiotServiceImpl implements RiotService {
             riotChampion.setName(champion.getString("name"));
             riotChampion.setTitle(champion.getString("title"));
             riotChampion.setImage(champion.getJSONObject("image").getString("full"));
-            riotChampion.setSprite(champion.getJSONObject("image").getString("sprite"));
+            riotChampion.setSprite(riotChampion.getId()+"_0.jpg");
             riotChampion.setLore(champion.getString("lore"));
             riotChampion.setPassive(passive.getString("name"));
             riotChampion.setPassiveDescription(passive.getString("description"));
