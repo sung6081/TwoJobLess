@@ -16,7 +16,7 @@ public interface RiotService {
 	
 	public Map<String, String> getNameAndKeyMapping();
 	
-	public RiotChampion getChampion(int key, Map<String, String> mappingIdWithKey);
+	public RiotChampion getChampion(int key, Map<String, String> mappingIdWithKey, boolean isFull);
 	
 	public List<RiotChampion> getRotationChamps(Map<String, String> mappingIdWithKey);
 	

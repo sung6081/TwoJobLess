@@ -15,8 +15,9 @@ public class Skill {
 	private String description; //스킬 설명
 	private String tooltip;
 	private String costType;
-	private List<Integer> cost; //소모값
-	private List<Integer> range;
+	private String costBurn; //소모값
+	private String cooldownBurn; //쿨타임
+	private String rangeBurn; //범위
 	private String image;
 	
 	//Constructor
@@ -24,15 +25,16 @@ public class Skill {
 		
 	}
 
-	public Skill(String name, String description, String tooltip, String costType, List<Integer> cost,
-			List<Integer> range, String image) {
+	public Skill(String name, String description, String tooltip, String costType, String costBurn, String cooldownBurn,
+			String rangeBurn, String image) {
 		super();
 		this.name = name;
 		this.description = description;
 		this.tooltip = tooltip;
 		this.costType = costType;
-		this.cost = cost;
-		this.range = range;
+		this.costBurn = costBurn;
+		this.cooldownBurn = cooldownBurn;
+		this.rangeBurn = rangeBurn;
 		this.image = image;
 	}
 
@@ -69,20 +71,20 @@ public class Skill {
 		this.costType = costType;
 	}
 
-	public List<Integer> getCost() {
-		return cost;
+	public String getCostBurn() {
+		return costBurn;
 	}
 
-	public void setCost(List<Integer> cost) {
-		this.cost = cost;
+	public void setCostBurn(String costBurn) {
+		this.costBurn = costBurn;
 	}
 
-	public List<Integer> getRange() {
-		return range;
+	public String getRangeBurn() {
+		return rangeBurn;
 	}
 
-	public void setRange(List<Integer> range) {
-		this.range = range;
+	public void setRangeBurn(String rangeBurn) {
+		this.rangeBurn = rangeBurn;
 	}
 
 	public String getImage() {
@@ -93,10 +95,19 @@ public class Skill {
 		this.image = image;
 	}
 
+	public String getCooldownBurn() {
+		return cooldownBurn;
+	}
+
+	public void setCooldownBurn(String cooldownBurn) {
+		this.cooldownBurn = cooldownBurn;
+	}
+
 	@Override
 	public String toString() {
 		return "Skill [name=" + name + ", description=" + description + ", tooltip=" + tooltip + ", costType="
-				+ costType + ", cost=" + cost + ", range=" + range + ", image=" + image + "]";
+				+ costType + ", costBurn=" + costBurn + ", cooldownBurn=" + cooldownBurn + ", range=" + rangeBurn
+				+ ", image=" + image + "]";
 	}
 	
 }

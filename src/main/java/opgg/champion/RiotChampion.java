@@ -2,6 +2,8 @@ package opgg.champion;
 
 import java.util.List;
 
+import opgg.dto.SkinDTO;
+
 public class RiotChampion {
 
 	//Field
@@ -16,6 +18,7 @@ public class RiotChampion {
 	private String passiveDescription; //pasive description
 	private String passiveImage; //passive image
 	private List<Skill> skills;
+	private List<SkinDTO> skins;
 	private boolean isRotation; //로테이션 여부
 	
 	//Constructor
@@ -24,7 +27,7 @@ public class RiotChampion {
 	}
 
 	public RiotChampion(String id, int key, String name, String title, String image, String sprite, String lore, String passive,
-			String passiveDescription, String passiveImage, List<Skill> skills) {
+			String passiveDescription, String passiveImage, List<Skill> skills, List<SkinDTO> skins) {
 		super();
 		this.id = id;
 		this.key = key;
@@ -37,6 +40,7 @@ public class RiotChampion {
 		this.passiveDescription = passiveDescription;
 		this.passiveImage = passiveImage;
 		this.skills = skills;
+		this.skins = skins;
 		this.isRotation = false;
 	}
 
@@ -121,6 +125,14 @@ public class RiotChampion {
 		this.skills = skills;
 	}
 
+	public List<SkinDTO> getSkins() {
+		return skins;
+	}
+
+	public void setSkins(List<SkinDTO> skins) {
+		this.skins = skins;
+	}
+
 	public boolean isRotation() {
 		return isRotation;
 	}
@@ -141,8 +153,8 @@ public class RiotChampion {
 	public String toString() {
 		return "RiotChampion [id=" + id + ", key=" + key + ", name=" + name + ", title=" + title + ", image=" + image
 				+ ", sprite=" + sprite + ", lore=" + lore + ", passive=" + passive + ", passiveDescription="
-				+ passiveDescription + ", passiveImage=" + passiveImage + ", skills=" + skills + ", isRotation="
-				+ isRotation + "]";
+				+ passiveDescription + ", passiveImage=" + passiveImage + ", skills=" + skills + ", skins=" + skins
+				+ ", isRotation=" + isRotation + "]";
 	}
 	
 }

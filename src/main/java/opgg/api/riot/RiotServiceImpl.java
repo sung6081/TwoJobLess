@@ -33,6 +33,7 @@ import opgg.dto.MatchDetailDTO;
 import opgg.dto.ParticipantDetailDTO;
 import opgg.dto.RankDTO;
 import opgg.dto.RiotAccountDTO;
+import opgg.dto.SkinDTO;
 
 @Service("riotService")
 public class RiotServiceImpl implements RiotService {
@@ -76,53 +77,84 @@ public class RiotServiceImpl implements RiotService {
     }
 
     @Override
-    public RiotChampion getChampion(int key, Map<String, String> mappingIdWithKey) {
+    public RiotChampion getChampion(int key, Map<String, String> mappingIdWithKey, boolean isFull) {
         RiotChampion riotChampion = new RiotChampion();
         String name = mappingIdWithKey.get(Integer.toString(key));
         String championUrl = infoUrl + "/" + version + "/data/" + language + "/champion/" + name + ".json";
 
         try {
+        	
             JSONObject champion = new JSONObject(get(championUrl)).getJSONObject("data").getJSONObject(name);
-            JSONObject passive = champion.getJSONObject("passive");
-            JSONArray skills = champion.getJSONArray("spells");
 
             riotChampion.setId(champion.getString("id"));
             riotChampion.setKey(key);
             riotChampion.setName(champion.getString("name"));
             riotChampion.setTitle(champion.getString("title"));
             riotChampion.setImage(champion.getJSONObject("image").getString("full"));
-            riotChampion.setSprite(riotChampion.getId()+"_0.jpg");
-            riotChampion.setLore(champion.getString("lore"));
-            riotChampion.setPassive(passive.getString("name"));
-            riotChampion.setPassiveDescription(passive.getString("description"));
-            riotChampion.setPassiveImage(passive.getJSONObject("image").getString("full"));
+            
+            //Full info
+            if(isFull) {
+            	
+            	JSONObject passive = champion.getJSONObject("passive");
+                JSONArray skills = champion.getJSONArray("spells");
+                JSONArray skins = champion.getJSONArray("skins");
+            	
+            	riotChampion.setSprite(riotChampion.getId()+"_0.jpg");
+                riotChampion.setLore(champion.getString("lore"));
+                riotChampion.setPassive(passive.getString("name"));
+                riotChampion.setPassiveDescription(passive.getString("description"));
+                riotChampion.setPassiveImage(passive.getJSONObject("image").getString("full"));
 
-            List<Skill> list = new ArrayList<>();
-            for (int i = 0; i < skills.length(); i++) {
-                JSONObject jsonObject = skills.getJSONObject(i);
-                Skill skill = new Skill();
+                //skill
+                List<Skill> list = new ArrayList<>();
+                for (int i = 0; i < skills.length(); i++) {
+                	
+                    JSONObject jsonObject = skills.getJSONObject(i);
+                    Skill skill = new Skill();
 
-                skill.setName(jsonObject.getString("name"));
-                skill.setDescription(jsonObject.getString("description"));
-                skill.setTooltip(jsonObject.getString("tooltip"));
-                skill.setCostType(jsonObject.getString("costType"));
+                    skill.setName(jsonObject.getString("name"));
+                    skill.setDescription(jsonObject.getString("description"));
+                    skill.setTooltip(jsonObject.getString("tooltip"));
+                    skill.setCostType(jsonObject.getString("costType"));
+                    skill.setCostBurn(jsonObject.getString("costBurn"));
+                    skill.setCooldownBurn(jsonObject.getString("cooldownBurn"));
+                    skill.setRangeBurn(jsonObject.getString("rangeBurn"));
 
-                if (!skill.getCostType().equals("소모값 없음")) {
-                    JSONArray array = jsonObject.getJSONArray("cost");
-                    List<Integer> list2 = new ArrayList<>();
-                    for (int j = 0; j < array.length(); j++) list2.add(array.getInt(j));
-                    skill.setCost(list2);
+//                    if (!skill.getCostType().equals("소모값 없음")) {
+//                        JSONArray array = jsonObject.getJSONArray("cost");
+//                        List<Integer> list2 = new ArrayList<>();
+//                        for (int j = 0; j < array.length(); j++) list2.add(array.getInt(j));
+//                        skill.setCost(list2);
+//                    }
+
+//                    JSONArray rangeArray = jsonObject.getJSONArray("range");
+//                    List<Integer> rangeList = new ArrayList<>();
+//                    for (int j = 0; j < rangeArray.length(); j++) rangeList.add(rangeArray.getInt(j));
+//                    skill.setRange(rangeList);
+
+                    skill.setImage(jsonObject.getJSONObject("image").getString("full"));
+                    list.add(skill);
+                    
                 }
-
-                JSONArray rangeArray = jsonObject.getJSONArray("range");
-                List<Integer> rangeList = new ArrayList<>();
-                for (int j = 0; j < rangeArray.length(); j++) rangeList.add(rangeArray.getInt(j));
-                skill.setRange(rangeList);
-
-                skill.setImage(jsonObject.getJSONObject("image").getString("full"));
-                list.add(skill);
+                riotChampion.setSkills(list);
+                
+                //skins
+                List<SkinDTO> list2 = new ArrayList<>();
+                for(int i = 0; i < skins.length(); i++) {
+                	
+                	JSONObject jsonObject = skins.getJSONObject(i);
+                	SkinDTO skinDTO = new SkinDTO();
+                	
+                	skinDTO.setId(jsonObject.getInt("id"));
+                	skinDTO.setName(jsonObject.getString("name"));
+                	skinDTO.setNum(jsonObject.getInt("num"));
+                	
+                	list2.add(skinDTO);
+                	
+                }
+                riotChampion.setSkins(list2);
+            	
             }
-            riotChampion.setSkills(list);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,7 +175,7 @@ public class RiotServiceImpl implements RiotService {
             JSONObject rotationInfo = new JSONObject(rotationResponse);
             JSONArray rotation = rotationInfo.getJSONArray("freeChampionIds");
             for (int i = 0; i < rotation.length(); i++) {
-                RiotChampion champ = getChampion(rotation.getInt(i), mappingIdWithKey);
+                RiotChampion champ = getChampion(rotation.getInt(i), mappingIdWithKey, false);
                 list.add(champ);
             }
         } catch (Exception e) {
@@ -181,7 +213,7 @@ public class RiotServiceImpl implements RiotService {
     	Set<String> ids = mappingIdWithKey.keySet();
     	for(String id : ids) {
     		
-    		RiotChampion champ = getChampion(Integer.parseInt(id), mappingIdWithKey);
+    		RiotChampion champ = getChampion(Integer.parseInt(id), mappingIdWithKey, true);
     		if(rotationBook.contains(id)) {
     			champ.setRotation(true);
     		}
@@ -207,7 +239,7 @@ public class RiotServiceImpl implements RiotService {
         for (int i = 0; i < masteries.length(); i++) {
             JSONObject mastery = masteries.getJSONObject(i);
             ChampionMastery cm = new ChampionMastery();
-            cm.setChampion(getChampion(mastery.getInt("championId"), mappingIdWithKey));
+            cm.setChampion(getChampion(mastery.getInt("championId"), mappingIdWithKey, false));
             cm.setChampionLevel(mastery.getInt("championLevel"));
             cm.setChampionPoints(mastery.getInt("championPoints"));
             cm.setLastPlayTime(mastery.getInt("lastPlayTime"));
