@@ -348,7 +348,7 @@ public class RiotServiceImpl implements RiotService {
             Map<Integer, Boolean> teamWinMap = new HashMap<>();
             for (JsonNode teamNode : teamsNode) {
                 int teamId = teamNode.path("teamId").asInt();
-                boolean win = "Win".equals(teamNode.path("win").asText());
+                boolean win = "Win".equalsIgnoreCase(teamNode.path("win").asText());
                 teamWinMap.put(teamId, win);
             }
 
@@ -379,7 +379,6 @@ public class RiotServiceImpl implements RiotService {
                 p.setSpell1Id(participant.path("summoner1Id").asInt());
                 p.setSpell2Id(participant.path("summoner2Id").asInt());
 
-                // 룬 정보 (메인/서브)
                 JsonNode perksStyles = participant.path("perks").path("styles");
                 if (perksStyles.isArray() && perksStyles.size() >= 2) {
                     p.setMainRuneId(perksStyles.get(0).path("style").asInt());
@@ -389,12 +388,12 @@ public class RiotServiceImpl implements RiotService {
                 p.setIndividualPosition(participant.path("individualPosition").asText());
 
                 int teamId = participant.path("teamId").asInt();
+                boolean isWin = teamWinMap.getOrDefault(teamId, false);
                 p.setTeamId(teamId);
-                p.setWin(teamWinMap.getOrDefault(teamId, false));
+                p.setWin(isWin);
 
                 participantList.add(p);
 
-                // 내가 찾는 puuid면 matchDetailDTO에 개인 정보 세팅
                 if (participant.path("puuid").asText().equals(puuid)) {
                     matchDetailDTO = new MatchDetailDTO();
                     matchDetailDTO.setMatchId(matchId);
@@ -402,6 +401,12 @@ public class RiotServiceImpl implements RiotService {
                     matchDetailDTO.setQueueId(info.path("queueId").asInt());
                     matchDetailDTO.setGameDuration(info.path("gameDuration").asLong());
                     matchDetailDTO.setGameCreation(info.path("gameCreation").asLong());
+
+                    matchDetailDTO.setChampionName(participant.path("championName").asText());
+                    matchDetailDTO.setKills(participant.path("kills").asInt());
+                    matchDetailDTO.setDeaths(participant.path("deaths").asInt());
+                    matchDetailDTO.setAssists(participant.path("assists").asInt());
+                    matchDetailDTO.setWin(isWin);
                 }
             }
 

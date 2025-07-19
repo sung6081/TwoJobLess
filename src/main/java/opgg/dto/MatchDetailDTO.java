@@ -9,10 +9,15 @@ public class MatchDetailDTO {
     private long gameDuration;
     private long gameCreation;
 
+    private String championName;
+    private int kills;
+    private int deaths;
+    private int assists;
+    private boolean win;
+
     private List<ParticipantDetailDTO> participants;
 
     // --- Getters & Setters ---
-
     public String getMatchId() {
         return matchId;
     }
@@ -46,6 +51,41 @@ public class MatchDetailDTO {
     }
     public void setGameCreation(long gameCreation) {
         this.gameCreation = gameCreation;
+    }
+
+    public String getChampionName() {
+        return championName;
+    }
+    public void setChampionName(String championName) {
+        this.championName = championName;
+    }
+
+    public int getKills() {
+        return kills;
+    }
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
+    }
+
+    public int getAssists() {
+        return assists;
+    }
+    public void setAssists(int assists) {
+        this.assists = assists;
+    }
+
+    public boolean isWin() {
+        return win;
+    }
+    public void setWin(boolean win) {
+        this.win = win;
     }
 
     public List<ParticipantDetailDTO> getParticipants() {
