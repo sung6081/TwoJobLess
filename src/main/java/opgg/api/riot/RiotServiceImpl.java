@@ -431,7 +431,7 @@ public class RiotServiceImpl implements RiotService {
             Map<Integer, Boolean> teamWinMap = new HashMap<>();
             for (JsonNode teamNode : teamsNode) {
                 int teamId = teamNode.path("teamId").asInt();
-                boolean win = "Win".equalsIgnoreCase(teamNode.path("win").asText());
+                boolean win = teamNode.path("win").asBoolean(); 
                 teamWinMap.put(teamId, win);
             }
 
