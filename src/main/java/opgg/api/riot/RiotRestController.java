@@ -21,6 +21,7 @@ import opgg.champion.RiotChampion;
 import opgg.dto.MatchDetailDTO;
 import opgg.dto.RankDTO;
 import opgg.dto.RiotAccountDTO;
+import opgg.dto.SpectatorMatchDTO;
 import opgg.entity.RiotAccount;
 import opgg.repository.RiotAccountRepository;
 
@@ -119,7 +120,7 @@ public class RiotRestController {
       String puuid = riotService.getRiotAccountWithGameName(gameName, tagLine).getPuuid();
       System.out.println("puuid : " + puuid);
       
-      Map<String, String> mappingIdWithKey = riotService.getNameAndKeyMapping();
+      Map<String, String> mappingIdWithKey = riotService.getChampAndKeyMapping();
       
       return riotService.getMasteryWithGameName(puuid, mappingIdWithKey);
       
@@ -130,7 +131,7 @@ public class RiotRestController {
       
       System.out.println("getRotationChamps");
       
-      return riotService.getRotationChamps(riotService.getNameAndKeyMapping());
+      return riotService.getRotationChamps(riotService.getChampAndKeyMapping());
       
    }
    
@@ -139,7 +140,7 @@ public class RiotRestController {
 	   
 	   System.out.println("getAllChamps");
 	   
-	   return riotService.getAllChamps(riotService.getNameAndKeyMapping());
+	   return riotService.getAllChamps(riotService.getChampAndKeyMapping());
 	   
    }
    
@@ -174,7 +175,7 @@ public class RiotRestController {
        }
 
        // ② PUUID 기반 랭크 조회
-       return riotService.getRankByPuuid(puuid);
+       return riotService.getRankByPuuid(puuid, false);
    }
    
    
@@ -196,6 +197,17 @@ public class RiotRestController {
            @PathVariable("gameName") String gameName,
            @PathVariable("tagLine") String tagLine) {
        return riotService.getRecentMatchDetailCategorized(gameName, tagLine);
+   }
+   
+   @GetMapping("getSpectatorByPuuid/{puuid}")
+   public SpectatorMatchDTO getSpectatorByPuuid(@PathVariable("puuid") String puuid) throws Exception {
+	   
+	   System.out.println("start getSpectatorByPuuid");
+	   
+	   Map<String, String> mappingIdWithKey = riotService.getSpellAndKeyMapping();
+	   
+	   return riotService.getSpectatorMatch(puuid, mappingIdWithKey);
+	   
    }
 
 }

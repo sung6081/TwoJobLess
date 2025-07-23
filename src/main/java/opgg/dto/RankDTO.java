@@ -47,5 +47,11 @@ public class RankDTO {
 		public void setLosses(int losses) {
 			this.losses = losses;
 		}
+		
+		@Override
+		public String toString() {
+			return "RankDTO [queueType=" + queueType + ", tier=" + tier + ", rank=" + rank + ", leaguePoints="
+					+ leaguePoints + ", wins=" + wins + ", losses=" + losses + "]";
+		}
 	    
 }

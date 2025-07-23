@@ -84,5 +84,11 @@ public class RiotAccountDTO {
 	public void setSummonerLevel(long summonerLevel) {
 		this.summonerLevel = summonerLevel;
 	}
+
+	@Override
+	public String toString() {
+		return "RiotAccountDTO [gameName=" + gameName + ", tagLine=" + tagLine + ", puuid=" + puuid + ", profileIconId="
+				+ profileIconId + ", summonerLevel=" + summonerLevel + ", id=" + id + "]";
+	}
 	
 }

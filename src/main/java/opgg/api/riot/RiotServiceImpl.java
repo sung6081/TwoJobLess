@@ -31,9 +31,14 @@ import opgg.champion.RiotChampion;
 import opgg.champion.Skill;
 import opgg.dto.MatchDetailDTO;
 import opgg.dto.ParticipantDetailDTO;
+import opgg.dto.ParticipantOfSpectatorDTO;
+import opgg.dto.PerkDTO;
 import opgg.dto.RankDTO;
 import opgg.dto.RiotAccountDTO;
+import opgg.dto.RuneDTO;
 import opgg.dto.SkinDTO;
+import opgg.dto.SpectatorMatchDTO;
+import opgg.dto.SpellDTO;
 
 @Service("riotService")
 public class RiotServiceImpl implements RiotService {
@@ -51,15 +56,17 @@ public class RiotServiceImpl implements RiotService {
     private String language;
 
     @Override
-    public Map<String, String> getNameAndKeyMapping() {
-        System.out.println("start getNameANdKeyMapping api");
+    public Map<String, String> getChampAndKeyMapping() {
+    	
+        //System.out.println("start getNameANdKeyMapping api");
         String championsUrl = infoUrl + "/" + version + "/data/" + language + "/champion.json";
-        System.out.println("getChampionName url : " + championsUrl);
+        //System.out.println("getChampionName url : " + championsUrl);
 
         String championsResponse = get(championsUrl);
         Map<String, String> mappingIdWithKey = new HashMap<>();
 
         try {
+        	
             JSONObject championsInfo = new JSONObject(championsResponse);
             JSONObject champions = championsInfo.getJSONObject("data");
             JSONArray names = champions.names();
@@ -68,16 +75,52 @@ public class RiotServiceImpl implements RiotService {
                 JSONObject champion = champions.getJSONObject(names.getString(i));
                 mappingIdWithKey.put(champion.get("key").toString(), names.getString(i));
             }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        System.out.println("end getNameANdKeyMapping api");
+        //System.out.println("end getNameANdKeyMapping api");
+        
         return mappingIdWithKey;
+        
+    }
+    
+    @Override
+    public Map<String, String> getSpellAndKeyMapping() {
+    	
+    	//System.out.println("start getSpellAndKeyMapping");
+    	
+    	String spellUrl = infoUrl + "/" + version + "/data/" + language + "/summoner.json";
+    	//System.out.println("getSpellUrl : " + spellUrl);
+    	
+    	String spellResponse = get(spellUrl);
+    	Map<String, String> mappingIdWithKey = new HashMap<>();
+    	
+    	try {
+    		
+    		JSONObject spellsInfo = new JSONObject(spellResponse);
+    		JSONObject spells = spellsInfo.getJSONObject("data");
+    		JSONArray names = spells.names();
+    		
+    		for(int i = 0; i < names.length(); i++) {
+    			JSONObject spell = spells.getJSONObject(names.getString(i));
+    			mappingIdWithKey.put(spell.get("key").toString(), names.getString(i));
+    		}
+    		
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	//System.out.println("end getSpellAndKeyMapping");
+    	
+    	return mappingIdWithKey;
+    	
     }
 
     @Override
     public RiotChampion getChampion(int key, Map<String, String> mappingIdWithKey, boolean isFull) {
+    	
         RiotChampion riotChampion = new RiotChampion();
         String name = mappingIdWithKey.get(Integer.toString(key));
         String championUrl = infoUrl + "/" + version + "/data/" + language + "/champion/" + name + ".json";
@@ -165,8 +208,9 @@ public class RiotServiceImpl implements RiotService {
 
     @Override
     public List<RiotChampion> getRotationChamps(Map<String, String> mappingIdWithKey) {
+    	
         List<RiotChampion> list = new ArrayList<>();
-        System.out.println("start getRotationChamps api");
+        //System.out.println("start getRotationChamps api");
 
         String url = "https://kr.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=" + apiKey;
         String rotationResponse = get(url);
@@ -182,14 +226,14 @@ public class RiotServiceImpl implements RiotService {
             e.printStackTrace();
         }
 
-        System.out.println("end getRotationChamps api");
+        //System.out.println("end getRotationChamps api");
         return list;
     }
     
     @Override
     public List<RiotChampion> getAllChamps(Map<String, String> mappingIdWithKey) {
     
-    	System.out.println("start getAllChamps");
+    	//System.out.println("start getAllChamps");
     	
     	List<RiotChampion> champions = new ArrayList<>();
     	
@@ -221,44 +265,17 @@ public class RiotServiceImpl implements RiotService {
     		
     	}
     	
-    	System.out.println("end getAllChamps");
+    	//System.out.println("end getAllChamps");
     	
     	return champions;
     	
     }
 
     @Override
-    public List<ChampionMastery> getMasteryWithGameName(String puuid, Map<String, String> mappingIdWithKey) {
-        System.out.println("start getMasteryWithGameName api");
-
-        String url = "https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/" + puuid + "?api_key=" + apiKey;
-        String responseBody = get(url);
-        JSONArray masteries = new JSONArray(responseBody);
-        List<ChampionMastery> result = new ArrayList<>();
-
-        for (int i = 0; i < masteries.length(); i++) {
-            JSONObject mastery = masteries.getJSONObject(i);
-            ChampionMastery cm = new ChampionMastery();
-            cm.setChampion(getChampion(mastery.getInt("championId"), mappingIdWithKey, false));
-            cm.setChampionLevel(mastery.getInt("championLevel"));
-            cm.setChampionPoints(mastery.getInt("championPoints"));
-            cm.setLastPlayTime(mastery.getInt("lastPlayTime"));
-            cm.setChampionPointsSinceLastLevel(mastery.getInt("championPointsSinceLastLevel"));
-            cm.setChampionPointsUntilNextLevel(mastery.getInt("championPointsUntilNextLevel"));
-            cm.setMarkRequiredForNextLevel(mastery.getInt("markRequiredForNextLevel"));
-            cm.setTokensEarned(mastery.getInt("tokensEarned"));
-            cm.setChampionSeasonMilestone(mastery.getInt("championSeasonMilestone"));
-            result.add(cm);
-        }
-
-        System.out.println("end getMasteryWithGameName api");
-        return result;
-    }
-
-    @Override
     public RiotAccountDTO getRiotAccountWithGameName(String gameName, String tagLine) {
+    	
         RiotAccountDTO dto = new RiotAccountDTO();
-        System.out.println("start getRiotAccountWithGameName api");
+        //System.out.println("start getRiotAccountWithGameName api");
 
         try {
             gameName = URLEncoder.encode(gameName, StandardCharsets.UTF_8);
@@ -283,13 +300,14 @@ public class RiotServiceImpl implements RiotService {
             e.printStackTrace();
         }
 
-        System.out.println("end getRiotAccountWithGameName api");
+        //System.out.println("end getRiotAccountWithGameName api");
         return dto;
     }
 
     @Override
     public RiotAccountDTO getRiotAccountWithPuuid(String puuid) {
-        System.out.println("start getRiotAccountWithPuuid");
+    	
+        //System.out.println("start getRiotAccountWithPuuid");
         RiotAccountDTO dto = new RiotAccountDTO();
         String url = "https://asia.api.riotgames.com/riot/account/v1/accounts/by-puuid/" + puuid + "?api_key=" + apiKey;
         String responseBody = get(url);
@@ -301,25 +319,26 @@ public class RiotServiceImpl implements RiotService {
             e.printStackTrace();
         }
 
-        System.out.println("end getRiotAccountWithPuuid");
+        //System.out.println("end getRiotAccountWithPuuid");
         return dto;
     }
 
     @Override
     public RiotAccountDTO getSummonerByPuuid(RiotAccountDTO riotAccountDTO) {
-        System.out.println("start getSummonerByPuuid");
+    	
+        //System.out.println("start getSummonerByPuuid");
 
         String url = "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/" + riotAccountDTO.getPuuid() + "?api_key=" + apiKey;
         String responseBody = get(url);
 
         if (responseBody.contains("\"status\"")) {
-            System.out.println("API 오류 응답: " + responseBody);
+            //System.out.println("API 오류 응답: " + responseBody);
             return riotAccountDTO;
         }
 
         try {
             JSONObject summonerInfo = new JSONObject(responseBody);
-            System.out.println(summonerInfo);
+            //System.out.println(summonerInfo);
             //riotAccountDTO.setId(summonerInfo.getString("id"));
             riotAccountDTO.setProfileIconId(summonerInfo.getLong("profileIconId"));
             riotAccountDTO.setSummonerLevel(summonerInfo.getLong("summonerLevel"));
@@ -327,12 +346,42 @@ public class RiotServiceImpl implements RiotService {
             e.printStackTrace();
         }
 
-        System.out.println("end getSummonerByPuuid");
+        //System.out.println("end getSummonerByPuuid");
         return riotAccountDTO;
+    }
+    
+    @Override
+    public List<ChampionMastery> getMasteryWithGameName(String puuid, Map<String, String> mappingIdWithKey) {
+    	
+        //System.out.println("start getMasteryWithGameName api");
+
+        String url = "https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/" + puuid + "?api_key=" + apiKey;
+        String responseBody = get(url);
+        JSONArray masteries = new JSONArray(responseBody);
+        List<ChampionMastery> result = new ArrayList<>();
+
+        for (int i = 0; i < masteries.length(); i++) {
+            JSONObject mastery = masteries.getJSONObject(i);
+            ChampionMastery cm = new ChampionMastery();
+            cm.setChampion(getChampion(mastery.getInt("championId"), mappingIdWithKey, false));
+            cm.setChampionLevel(mastery.getInt("championLevel"));
+            cm.setChampionPoints(mastery.getInt("championPoints"));
+            cm.setLastPlayTime(mastery.getInt("lastPlayTime"));
+            cm.setChampionPointsSinceLastLevel(mastery.getInt("championPointsSinceLastLevel"));
+            cm.setChampionPointsUntilNextLevel(mastery.getInt("championPointsUntilNextLevel"));
+            cm.setMarkRequiredForNextLevel(mastery.getInt("markRequiredForNextLevel"));
+            cm.setTokensEarned(mastery.getInt("tokensEarned"));
+            cm.setChampionSeasonMilestone(mastery.getInt("championSeasonMilestone"));
+            result.add(cm);
+        }
+
+        //System.out.println("end getMasteryWithGameName api");
+        return result;
     }
 
     @Override
     public List<MatchDetailDTO> getRecentMatchDetail(String gameName, String tagLine) {
+    	
         RiotAccountDTO account = getRiotAccountWithGameName(gameName, tagLine);
         if (account == null || account.getPuuid() == null) return Collections.emptyList();
 
@@ -349,6 +398,7 @@ public class RiotServiceImpl implements RiotService {
     }
 
     public List<String> getMatchIdsByPuuid(String puuid) {
+    	
         String url = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=0&count=50&api_key=" + apiKey;
         List<String> matchIds = new ArrayList<>();
 
@@ -365,6 +415,7 @@ public class RiotServiceImpl implements RiotService {
 
     @Override
     public MatchDetailDTO getMatchDetail(String matchId, String puuid) {
+    	
         String url = "https://asia.api.riotgames.com/lol/match/v5/matches/" + matchId + "?api_key=" + apiKey;
 
         try {
@@ -457,28 +508,32 @@ public class RiotServiceImpl implements RiotService {
 
 
     @Override
-    public List<RankDTO> getRankByPuuid(String puuid) {
-        System.out.println("start getRankByPuuid");
+    public List<RankDTO> getRankByPuuid(String puuid, boolean onlyRank) {
+    	
+        //System.out.println("start getRankByPuuid");
 
         List<RankDTO> ranks = new ArrayList<>();
         String url = "https://kr.api.riotgames.com/lol/league/v4/entries/by-puuid/"
                    + puuid + "?api_key=" + apiKey;
 
         try {
+        	
             String responseBody = get(url);
 
             // Riot API 오류 응답 처리
             if (responseBody.contains("\"status\"")) {
-                System.out.println("API 오류 응답: " + responseBody);
+                //System.out.println("API 오류 응답: " + responseBody);
                 return ranks;
             }
 
             JSONArray rankArray = new JSONArray(responseBody);
             for (int i = 0; i < rankArray.length(); i++) {
+            	
                 JSONObject obj = rankArray.getJSONObject(i);
 
                 RankDTO dto = new RankDTO();
                 dto.setQueueType(obj.optString("queueType"));
+                if(onlyRank && !dto.getQueueType().equals("RANKED_SOLO_5x5"))	continue;
                 dto.setTier(obj.optString("tier"));
                 dto.setRank(obj.optString("rank"));
                 dto.setLeaguePoints(obj.optInt("leaguePoints"));
@@ -487,13 +542,111 @@ public class RiotServiceImpl implements RiotService {
 
                 ranks.add(dto);
             }
+            
         } catch (Exception e) {
-            System.out.println("랭크 정보 가져오기 실패");
+            //System.out.println("랭크 정보 가져오기 실패");
             e.printStackTrace();
         }
 
-        System.out.println("end getRankByPuuid");
+        //System.out.println("end getRankByPuuid");
         return ranks;
+    }
+    
+    public SpectatorMatchDTO getSpectatorMatch(String puuid, Map<String, String> mappingIdWithKey) {
+    	
+    	//System.out.println("start getSpectatorMatch");
+    	
+    	SpectatorMatchDTO spectatorMatchDTO = new SpectatorMatchDTO();
+    	
+    	String url = "https://kr.api.riotgames.com/lol/spectator/v5/active-games/by-summoner/" + puuid + "?api_key=" + apiKey;
+    	
+    	try {
+    		
+    		String responseBody = get(url);
+    		
+    		// Riot API 오류 응답 처리
+            if (responseBody.contains("\"status\"")) {
+                System.out.println("API 오류 응답: " + responseBody);
+                return spectatorMatchDTO;
+            }
+    		
+    		JSONObject response = new JSONObject(responseBody);
+    		
+    		//매치 기본 정보
+    		spectatorMatchDTO.setGameId(response.getLong("gameId"));
+    		spectatorMatchDTO.setMapId(response.getLong("mapId"));
+    		spectatorMatchDTO.setGameMode(getGameModeKo(response.getString("gameMode")));
+    		spectatorMatchDTO.setGameType(response.getString("gameType"));
+    		spectatorMatchDTO.setGameQueueConfigId(response.getLong("gameQueueConfigId"));
+    		spectatorMatchDTO.setGameStartTime(response.getLong("gameStartTime"));
+    		spectatorMatchDTO.setGameLength(response.getLong("gameLength"));
+    		
+    		//유저정보
+    		JSONArray participants = response.getJSONArray("participants");
+    		List<ParticipantOfSpectatorDTO> participantOfSpectatorDTOs = new ArrayList<>();
+    		Map<String, String> champsMap = getChampAndKeyMapping(); //침피언 id, key mapping map
+    		
+    		//참가자들 순회
+    		for(int i = 0; i < participants.length(); i++) {
+    			
+    			//참가자 json
+    			JSONObject participant = participants.getJSONObject(i);
+    			ParticipantOfSpectatorDTO participantOfSpectatorDTO = new ParticipantOfSpectatorDTO();
+    			
+    			RiotAccountDTO riotAccountDTO = getRiotAccountWithPuuid(participant.getString("puuid"));
+    			riotAccountDTO = getSummonerByPuuid(riotAccountDTO);
+    			participantOfSpectatorDTO.setRiotAccountDTO(riotAccountDTO);
+    			
+    			RankDTO rankDTO = getRankByPuuid(participant.getString("puuid"), true).get(0);
+    			participantOfSpectatorDTO.setRankDTO(rankDTO);
+    			
+    			participantOfSpectatorDTO.setTeamId(participant.getLong("teamId"));
+    			
+    			//spell 정보
+    			List<SpellDTO> spells = new ArrayList<>();
+    			SpellDTO spell1 = getSpell(mappingIdWithKey.get(participant.get("spell1Id").toString()));
+    			SpellDTO spell2 = getSpell(mappingIdWithKey.get(participant.get("spell2Id").toString()));
+    			spells.add(spell1);
+    			spells.add(spell2);
+    			participantOfSpectatorDTO.setSpells(spells);
+    			
+    			//champ 정보
+    			participantOfSpectatorDTO.setChamp(getChampion(participant.getInt("championId"), champsMap, false));
+    			
+    			//룬 정보
+    			JSONObject perks = participant.getJSONObject("perks");
+    			participantOfSpectatorDTO.setPerkStyle(perks.getLong("perkStyle"));
+    			participantOfSpectatorDTO.setPerkSubStyle(perks.getLong("perkSubStyle"));
+    			
+    			//선택된 룬들 저장
+    			JSONArray seleted = perks.getJSONArray("perkIds");
+    			Set<Long> selectedPerks = new HashSet<>();
+    			for(int j = 0; j < seleted.length(); j++) {
+    				selectedPerks.add(seleted.getLong(j));
+    			}
+    			
+    			//System.out.println("선택된 룬 json : " + seleted);
+    			//System.out.println("선택된 룬 set : " + selectedPerks);
+    			
+    			participantOfSpectatorDTO.setPerk(getPerk(participantOfSpectatorDTO.getPerkStyle(), true, selectedPerks));
+    			participantOfSpectatorDTO.setSubPerk(getPerk(participantOfSpectatorDTO.getPerkSubStyle(), false, selectedPerks));
+    			
+    			//list에 추가
+    			participantOfSpectatorDTOs.add(participantOfSpectatorDTO);
+    			
+    		}
+    		
+    		//list에 저장된 참가자들 정보 추가
+    		spectatorMatchDTO.setParticipants(participantOfSpectatorDTOs);
+    		
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	//System.out.println("end getSpectatorMatch");
+    	
+    	return spectatorMatchDTO;
+    	
     }
    
 
@@ -509,6 +662,7 @@ public class RiotServiceImpl implements RiotService {
             con.disconnect();
         }
     }
+    
 
     private static HttpURLConnection connect(String apiUrl) {
         try {
@@ -520,6 +674,7 @@ public class RiotServiceImpl implements RiotService {
             throw new RuntimeException("연결이 실패했습니다. : " + apiUrl, e);
         }
     }
+    
 
     private static String readBody(InputStream body) {
         InputStreamReader streamReader = new InputStreamReader(body);
@@ -534,6 +689,109 @@ public class RiotServiceImpl implements RiotService {
             throw new RuntimeException("API 응답을 읽는 데 실패했습니다.", e);
         }
     }
+    
+    private SpellDTO getSpell(String id) {
+    	
+    	//System.out.println("getRune");
+    	
+    	SpellDTO spellDTO = new SpellDTO();
+    	
+    	String url = infoUrl + "/" + version + "/data/" + language + "/summoner.json";
+    	String responseBody = get(url);
+    	
+    	try {
+    		
+    		JSONObject response = new JSONObject(responseBody);
+    		JSONObject spell = response.getJSONObject("data").getJSONObject(id);
+    		
+    		spellDTO.setKey(spell.getInt("key"));
+    		spellDTO.setName(spell.getString("name"));
+    		spellDTO.setDescription(spell.getString("description"));
+    		spellDTO.setTooltip(spell.getString("tooltip"));
+    		spellDTO.setCooldownBurn(spell.getString("cooldownBurn"));
+    		spellDTO.setRangeBurn(spell.getString("rangeBurn"));
+    		spellDTO.setImage(spell.getJSONObject("image").getString("full"));
+    		
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	//System.out.println("end getRune");
+    	
+    	return spellDTO;
+    	
+    }
+    
+    private PerkDTO getPerk(long perkStyle, boolean isMain, Set<Long> selectdRunes) {
+    	
+    	//System.out.println("start getMainPerk");
+    	
+    	PerkDTO perkDTO = new PerkDTO();
+    	
+    	String url = infoUrl + "/" + version + "/data/" + language + "/runesReforged.json";
+    	String responseBody = get(url);
+    	
+    	try {
+    		
+    		JSONArray response = new JSONArray(responseBody);
+    		JSONObject perk = new JSONObject();
+    		
+    		for(int i = 0; i < response.length(); i++) {
+    			
+    			JSONObject obj = response.getJSONObject(i);
+    			if(obj.getLong("id") == perkStyle)	{ 
+    				perk = obj;
+    				break;
+    			}
+    			
+    		}
+    		
+    		JSONArray slots = perk.getJSONArray("slots");
+    		
+    		//룬 기본정보
+    		perkDTO.setId(perk.getLong("id"));
+    		perkDTO.setIcon(perk.getString("icon"));
+    		perkDTO.setName(perk.getString("name"));
+    		
+    		List<List<RuneDTO>> runesSet = new ArrayList<>();
+    		
+    		for(int i = 0; i < slots.length(); i++) {
+    			
+    			if(!isMain & i == 0)	continue;
+    			
+    			JSONArray runes = slots.getJSONObject(i).getJSONArray("runes");
+    			List<RuneDTO> runesInfo = new ArrayList<>();
+    			
+    			for(int j = 0; j < runes.length(); j++) {
+    				
+    				JSONObject rune = runes.getJSONObject(j);
+    				RuneDTO runeDTO = new RuneDTO();
+    				
+    				runeDTO.setId(rune.getLong("id"));
+    				if(selectdRunes.contains(runeDTO.getId()))	runeDTO.setSelected(true);
+    				runeDTO.setIcon(rune.getString("icon"));
+    				runeDTO.setName(rune.getString("name"));
+    				runeDTO.setLongDesc(rune.getString("longDesc"));
+    				
+    				runesInfo.add(runeDTO);
+    				
+    			}
+    			
+    			runesSet.add(runesInfo);
+    			
+    		}
+    		
+    		perkDTO.setRunes(runesSet);
+    		
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	//System.out.println("end getMainPerk");
+    	
+    	return perkDTO;
+    	
+    }
 
     private String getGameModeKo(String gameMode) {
         return switch (gameMode) {
@@ -545,6 +803,7 @@ public class RiotServiceImpl implements RiotService {
             default -> "기타";
         };
     }
+    
 
 	@Override
 	public Map<String, Map<String, List<MatchDetailDTO>>> getRecentMatchDetailCategorized(String gameName,
@@ -552,6 +811,5 @@ public class RiotServiceImpl implements RiotService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }
