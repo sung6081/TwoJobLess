@@ -805,11 +805,24 @@ public class RiotServiceImpl implements RiotService {
     }
     
 
-	@Override
-	public Map<String, Map<String, List<MatchDetailDTO>>> getRecentMatchDetailCategorized(String gameName,
-			String tagLine) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Map<String, Map<String, List<MatchDetailDTO>>> getRecentMatchDetailCategorized(String gameName, String tagLine) {
+        List<MatchDetailDTO> matches = getRecentMatchDetail(gameName, tagLine);
+
+        Map<String, Map<String, List<MatchDetailDTO>>> categorizedMatches = new HashMap<>();
+
+        for (MatchDetailDTO match : matches) {
+            String gameMode = match.getGameMode(); // 예: CLASSIC, ARAM 등
+            String winOrLose = match.isWin() ? "win" : "lose";
+
+            categorizedMatches
+                .computeIfAbsent(gameMode, k -> new HashMap<>())
+                .computeIfAbsent(winOrLose, k -> new ArrayList<>())
+                .add(match);
+        }
+
+        return categorizedMatches;
+    }
+
 
 }
